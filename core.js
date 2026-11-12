@@ -62,15 +62,40 @@
     return `${HSMC.DOSSIER_SEARCH_BASE_URL}?${params.join("&")}`;
   };
 
-  // Trạng thái Cột L được xem là đã kết thúc (khớp công thức Google Sheet)
+  // Trạng thái Cột L được xem là đã kết thúc (khớp công thức Google Sheet & nghiệp vụ Một Cửa)
   HSMC.FINAL_STATUSES = [
-    "Đã rút hồ sơ",
-    "Dừng xử lý",
-    "Chờ rút hồ sơ",
-    "Không được tiếp nhận",
     "Đã trả kết quả",
-    "Đã xử lý xong"
+    "Đã xử lý xong",
+    "Đã rút hồ sơ",
+    "Chờ rút hồ sơ",
+    "Dừng xử lý",
+    "Không được tiếp nhận",
+    "Hoàn thành",
+    "Hoàn thành trước hạn",
+    "Hoàn thành đúng hạn",
+    "Hoàn thành trễ hạn"
   ];
+
+  // Kiểm tra một trạng thái có phải là kết thúc hay không (chuẩn hóa tiếng Việt, không phân biệt hoa thường)
+  HSMC.isFinalStatus = function (statusText) {
+    if (!statusText) return false;
+    const s = String(statusText).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+    if (s.includes("da tra ket qua") || s.includes("da tra kq") || s.includes("da xu ly xong") ||
+        s.includes("rut ho so") || s.includes("dung xu ly") || s.includes("khong duoc tiep nhan") ||
+        s.includes("tu choi") || s.includes("hoan thanh")) {
+      return true;
+    }
+    return HSMC.FINAL_STATUSES.some((f) => {
+      const fn = f.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+      return s === fn || s.includes(fn);
+    });
+  };
+
+  // Tự động nhận diện trạng thái đang xử lý cần theo dõi hạn (mọi trạng thái quét được NGOẠI TRỪ nhóm kết thúc)
+  HSMC.isMonitoredStatusByDefault = function (statusText) {
+    if (!statusText) return false;
+    return !HSMC.isFinalStatus(statusText);
+  };
 
   // Trạng thái Cột L cần đối chiếu thời hạn (mặc định chuẩn - lấy từ dữ liệu thực tế của hệ thống Một cửa)
   HSMC.DEFAULT_ACTIVE_STATUSES = [
@@ -165,39 +190,97 @@
     return s;
   };
 
-  // Tự động phát hiện vị trí cột dựa trên dòng tiêu đề thực tế của Sheet
+  // Tự động phát hiện vị trí cột dựa trên dòng tiêu đề thực tế của Sheet (100% Dynamic Scan)
   HSMC.detectColumnMapping = function (headerRow) {
     if (!headerRow || !Array.isArray(headerRow)) return Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING);
     const mapping = Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING);
     const norm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+    let hasExactStatus = false;
 
     headerRow.forEach((colName, idx) => {
       const h = norm(colName);
       const letter = HSMC.indexToColLetter(idx);
       if (!h || !letter) return;
 
-      if (h.includes("ma ho so") || h.includes("mahs")) mapping.maHoSo = letter;
+      if (h.includes("ma ho so") || h.includes("mahs") || h.includes("so ho so")) mapping.maHoSo = letter;
       else if (h.includes("thu tuc") || h.includes("ten thu tuc")) mapping.tenThuTuc = letter;
-      else if (h.includes("linh vuc")) mapping.tenLinhVuc = letter;
-      else if (h.includes("noi dung")) mapping.noiDung = letter;
-      else if (h.includes("tiep nhan")) mapping.ngayTiepNhan = letter;
+      else if (h.includes("linh vuc") || h.includes("ten linh vuc")) mapping.tenLinhVuc = letter;
+      else if (h.includes("noi dung") || h.includes("yeu cau")) mapping.noiDung = letter;
+      else if (h.includes("tiep nhan") || h.includes("ngay tiep")) mapping.ngayTiepNhan = letter;
       else if (h.includes("hen tra") || h.includes("ngay hen")) mapping.ngayHenTra = letter;
-      else if (h.includes("ket thuc") || h.includes("tra ket qua")) mapping.ngayKetThuc = letter;
-      else if (h.includes("chu ho so")) mapping.chuHoSo = letter;
-      else if (h.includes("nguoi nop")) mapping.nguoiNop = letter;
+      else if (h.includes("ket thuc") || h.includes("tra ket qua") || h.includes("tra kq")) mapping.ngayKetThuc = letter;
+      else if (h.includes("chu ho so") || h.includes("ten chu")) mapping.chuHoSo = letter;
+      else if (h.includes("nguoi nop") || h.includes("nguoi gui")) mapping.nguoiNop = letter;
       else if (h.includes("dien thoai") || h.includes("sdt") || h.includes("so dt")) mapping.soDienThoai = letter;
-      else if (h.includes("trang thai")) mapping.trangThaiHoSo = letter;
+      else if (h.includes("trang thai")) {
+        mapping.trangThaiHoSo = letter;
+        hasExactStatus = true;
+      } else if (!hasExactStatus && h.includes("tinh trang")) {
+        mapping.trangThaiHoSo = letter;
+      }
       else if (h === "stt" || h.includes("so thu tu")) mapping.stt = letter;
     });
     return mapping;
   };
 
-  // Cấu hình quy trình các bước chuẩn mẫu (tham khảo một cửa)
+  // Tự động quét và phát hiện các bước quy trình thực tế từ dòng tiêu đề của Sheet (Phương án A)
+  HSMC.detectWorkflowSteps = function (headerRow, columnMapping) {
+    const mapping = columnMapping || (headerRow ? HSMC.detectColumnMapping(headerRow) : Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING));
+    const deadlineCol = mapping.ngayHenTra || "G";
+    const steps = [];
+
+    // Bước 1: Tiếp nhận hồ sơ (gắn với cột ngày tiếp nhận thực tế F)
+    const receiveCol = mapping.ngayTiepNhan || "F";
+    steps.push({
+      id: "step_tiep_nhan",
+      name: "1. Tiếp nhận hồ sơ",
+      dateCol: receiveCol,
+      deadlineCol: deadlineCol
+    });
+
+    // Quét tìm các cột mốc trung gian nếu có trong Header
+    if (Array.isArray(headerRow)) {
+      const norm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+      const skipCols = new Set([mapping.ngayTiepNhan, mapping.ngayHenTra, mapping.ngayKetThuc].filter(Boolean));
+
+      headerRow.forEach((colName, idx) => {
+        const letter = HSMC.indexToColLetter(idx);
+        if (!letter || skipCols.has(letter)) return;
+        const h = norm(colName);
+        if (h.includes("thu ly") || h.includes("tham dinh") || h.includes("chuyen mon")) {
+          steps.push({
+            id: "step_thu_ly_" + letter,
+            name: `${steps.length + 1}. Thụ lý & Thẩm định (${colName})`,
+            dateCol: letter,
+            deadlineCol: deadlineCol
+          });
+        } else if (h.includes("trinh ky") || h.includes("phe duyet") || h.includes("ky duyet") || h.includes("lanh dao")) {
+          steps.push({
+            id: "step_phe_duyet_" + letter,
+            name: `${steps.length + 1}. Trình ký & Phê duyệt (${colName})`,
+            dateCol: letter,
+            deadlineCol: deadlineCol
+          });
+        }
+      });
+    }
+
+    // Bước kết thúc: Xử lý & Trả kết quả (gắn với cột kết thúc xử lý thực tế H)
+    const finishCol = mapping.ngayKetThuc || "H";
+    steps.push({
+      id: "step_tra_kq",
+      name: `${steps.length + 1}. Xử lý & Trả kết quả`,
+      dateCol: finishCol,
+      deadlineCol: deadlineCol
+    });
+
+    return steps;
+  };
+
+  // Cấu hình quy trình các bước chuẩn mẫu (dự phòng)
   HSMC.DEFAULT_WORKFLOW_STEPS = [
     { id: "step_tiep_nhan", name: "1. Tiếp nhận hồ sơ", dateCol: "F", deadlineCol: "G" },
-    { id: "step_thu_ly", name: "2. Thụ lý & Thẩm định", dateCol: "", deadlineCol: "" },
-    { id: "step_phe_duyet", name: "3. Trình ký & Phê duyệt", dateCol: "", deadlineCol: "" },
-    { id: "step_tra_kq", name: "4. Trả kết quả", dateCol: "H", deadlineCol: "G" }
+    { id: "step_tra_kq", name: "2. Xử lý & Trả kết quả", dateCol: "H", deadlineCol: "G" }
   ];
 
   // ---------------------------------------------------------------
@@ -502,13 +585,15 @@
     config = config || {};
     now = now || new Date();
 
-    const mapping = Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING, config.columnMapping || {});
+    const header = rows[0] || [];
+    // Tự động nhận diện cột từ dòng tiêu đề thực tế của Sheet
+    const autoDetectedMapping = HSMC.detectColumnMapping(header);
+    const mapping = Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING, autoDetectedMapping, config.columnMapping || {});
     const colIdx = {};
     Object.keys(HSMC.DEFAULT_COLUMN_MAPPING).forEach((k) => {
       colIdx[k] = HSMC.colLetterToIndex(mapping[k] !== undefined ? mapping[k] : HSMC.DEFAULT_COLUMN_MAPPING[k]);
     });
 
-    const header = rows[0] || [];
     const requiredKeys = ["maHoSo", "ngayTiepNhan", "ngayHenTra", "trangThaiHoSo"];
     const missingKeys = requiredKeys.filter((k) => colIdx[k] < 0 || colIdx[k] >= header.length);
     if (missingKeys.length > 0 && header.length < 12) {
@@ -560,7 +645,7 @@
       const dateEnd = HSMC.parseCustomDate(item.ngayHenTra, 17, 0, 0);
       // Ngày kết thúc: nếu không có giờ -> mặc định cuối giờ hành chính (17:00)
       const dateFinish = HSMC.parseCustomDate(item.ngayKetThuc, 17, 0, 0);
-      const isCompleted = dateFinish !== null || HSMC.FINAL_STATUSES.includes(item.trangThaiHoSo);
+      const isCompleted = dateFinish !== null || HSMC.isFinalStatus(item.trangThaiHoSo);
 
       let status = HSMC.PROGRESS.PROCESSING;
       let totalDays = null;
@@ -602,7 +687,10 @@
           status = HSMC.PROGRESS.DONE;
         }
       } else if (dateEnd) {
-        const monitored = selectedStatuses.length === 0 || selectedStatuses.includes(item.trangThaiHoSo);
+        // Nhóm ĐANG XỬ LÝ: Tự động lọc tất cả trạng thái chưa kết thúc nếu chưa có cấu hình thủ công
+        const monitored = selectedStatuses.length > 0
+          ? selectedStatuses.includes(item.trangThaiHoSo)
+          : HSMC.isMonitoredStatusByDefault(item.trangThaiHoSo);
         if (monitored) {
           if (dateEnd.getTime() <= now.getTime() || remainingDays <= 0) {
             status = HSMC.PROGRESS.OVERDUE;
@@ -624,7 +712,7 @@
       if (config.enableStepTracking) {
         const steps = Array.isArray(config.stepDefinitions) && config.stepDefinitions.length > 0
           ? config.stepDefinitions
-          : HSMC.DEFAULT_WORKFLOW_STEPS;
+          : HSMC.detectWorkflowSteps(header, mapping);
 
         stepDetails = [];
         let foundCurrent = false;
@@ -718,7 +806,8 @@
   };
 
   HSMC.extractMetadata = function (rows, mapping) {
-    mapping = Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING, mapping || {});
+    const detected = HSMC.detectColumnMapping(rows && rows[0]);
+    mapping = Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING, detected, mapping || {});
     const fieldIdx = HSMC.colLetterToIndex(mapping.tenLinhVuc);
     const statusIdx = HSMC.colLetterToIndex(mapping.trangThaiHoSo);
 
@@ -727,17 +816,30 @@
 
     const fields = new Set();
     const statuses = new Set();
-    for (let i = 1; i < rows.length; i++) {
+    for (let i = 1; i < (rows ? rows.length : 0); i++) {
       const r = rows[i];
-      if (r && r[fIdx]) fields.add(r[fIdx].trim());
-      if (r && r[sIdx]) statuses.add(r[sIdx].trim());
+      if (r && r[fIdx]) {
+        const v = r[fIdx].trim();
+        if (v) fields.add(v);
+      }
+      if (r && r[sIdx]) {
+        const v = r[sIdx].trim();
+        if (v) statuses.add(v);
+      }
     }
     const sortVi = (a, b) => a.localeCompare(b, "vi");
+    const allFields = Array.from(fields).filter(Boolean).sort(sortVi);
+    const allStatuses = Array.from(statuses).filter(Boolean).sort(sortVi);
+    const detectedSteps = HSMC.detectWorkflowSteps(rows && rows[0], mapping);
+
     return {
-      headers: rows[0] || [],
-      fields: Array.from(fields).filter(Boolean).sort(sortVi),
-      statuses: Array.from(statuses).filter(Boolean).sort(sortVi),
-      totalRows: Math.max(0, rows.length - 1)
+      headers: (rows && rows[0]) || [],
+      fields: allFields,
+      statuses: allStatuses,
+      mapping: mapping,
+      detectedSteps: detectedSteps,
+      defaultActiveStatuses: allStatuses.filter((s) => HSMC.isMonitoredStatusByDefault(s)),
+      totalRows: Math.max(0, (rows ? rows.length : 0) - 1)
     };
   };
 

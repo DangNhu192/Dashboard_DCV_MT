@@ -1061,10 +1061,10 @@ function loadSettingsIntoForm() {
 
     columnMapping = Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING, data.columnMapping || {});
     enableStepTracking = !!data.enableStepTracking;
+    detectedSheetHeaders = data.sheetHeaders || [];
     stepDefinitions = Array.isArray(data.stepDefinitions) && data.stepDefinitions.length > 0
       ? data.stepDefinitions
-      : HSMC.DEFAULT_WORKFLOW_STEPS.map((s) => Object.assign({}, s));
-    detectedSheetHeaders = data.sheetHeaders || [];
+      : HSMC.detectWorkflowSteps(detectedSheetHeaders, columnMapping);
 
     renderColumnMappingForm(columnMapping, detectedSheetHeaders);
     renderStepTrackingForm(enableStepTracking, stepDefinitions, detectedSheetHeaders);
@@ -1082,8 +1082,9 @@ function loadSettingsIntoForm() {
     // Nếu chưa quét danh mục: lấy từ dữ liệu đã tải
     const availableFields = (data.availableFields && data.availableFields.length) ? data.availableFields : uniqueSorted(allDossiers, "tenLinhVuc");
     const availableStatuses = (data.availableStatuses && data.availableStatuses.length) ? data.availableStatuses : uniqueSorted(allDossiers, "trangThaiHoSo");
-    renderCheckboxList("settings-fields-container", availableFields, data.selectedFields || [], "field");
-    renderCheckboxList("settings-statuses-container", availableStatuses, data.selectedStatuses || [], "status");
+    const defaultSelStatuses = availableStatuses.filter((s) => HSMC.isMonitoredStatusByDefault(s));
+    renderCheckboxList("settings-fields-container", availableFields, (data.selectedFields && data.selectedFields.length) ? data.selectedFields : availableFields, "field");
+    renderCheckboxList("settings-statuses-container", availableStatuses, (data.selectedStatuses && data.selectedStatuses.length) ? data.selectedStatuses : defaultSelStatuses, "status");
   });
 }
 
@@ -1694,9 +1695,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (detectedSheetHeaders && detectedSheetHeaders.length) {
       columnMapping = HSMC.detectColumnMapping(detectedSheetHeaders);
       renderColumnMappingForm(columnMapping, detectedSheetHeaders);
-      showToast("🔍 Đã tự động nhận diện các cột theo tiêu đề sheet!", "success");
+      stepDefinitions = HSMC.detectWorkflowSteps(detectedSheetHeaders, columnMapping);
+      renderStepsTable(stepDefinitions, detectedSheetHeaders);
+      showToast("🔍 Đã tự động nhận diện các cột và bước quy trình theo tiêu đề sheet!", "success");
     } else {
-      showToast("Vui lòng bấm 'Quét Lĩnh vực & Trạng thái' trước để đọc tiêu đề cột từ Sheet.", "warning");
+      showToast("Vui lòng bấm 'Quét cấu trúc' trước để đọc tiêu đề cột từ Sheet.", "warning");
     }
   });
 
@@ -1713,9 +1716,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   on("btn-default-steps", "click", () => {
-    stepDefinitions = HSMC.DEFAULT_WORKFLOW_STEPS.map((s) => Object.assign({}, s));
+    stepDefinitions = HSMC.detectWorkflowSteps(detectedSheetHeaders, columnMapping);
     renderStepsTable(stepDefinitions, detectedSheetHeaders);
-    showToast("↺ Đã nạp lại 4 bước quy trình Một Cửa chuẩn.", "info");
+    showToast("↺ Đã nạp lại các bước quy trình phát hiện từ Sheet.", "info");
   });
 
   on("btn-add-step", "click", () => {
@@ -1801,14 +1804,18 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Không tìm thấy dữ liệu ở Cột Lĩnh vực hoặc Trạng thái.");
       }
 
-      // Giữ nguyên lựa chọn hiện có của người dùng
+      // Tự động nhận diện cột và bước quy trình thực tế từ Sheet (Phương án A)
+      columnMapping = meta.mapping;
+      stepDefinitions = meta.detectedSteps;
+
+      // Giữ nguyên lựa chọn hiện có của người dùng, hoặc mặc định tất cả lĩnh vực và các trạng thái đang xử lý
       const prevFields = getSelectedCheckboxes("settings-fields-container");
       const prevStatuses = getSelectedCheckboxes("settings-statuses-container");
       const keepF = prevFields.filter((f) => meta.fields.includes(f));
       const keepS = prevStatuses.filter((s) => meta.statuses.includes(s));
-      renderCheckboxList("settings-fields-container", meta.fields, keepF.length ? keepF : [], "field");
+      renderCheckboxList("settings-fields-container", meta.fields, keepF.length ? keepF : meta.fields, "field");
       renderCheckboxList("settings-statuses-container", meta.statuses,
-        keepS.length ? keepS : meta.statuses.filter((s) => HSMC.DEFAULT_ACTIVE_STATUSES.includes(s)), "status");
+        keepS.length ? keepS : meta.defaultActiveStatuses, "status");
 
       // Cập nhật lại dropdown danh sách cột theo tiêu đề vừa quét được
       renderColumnMappingForm(columnMapping, detectedSheetHeaders);
@@ -1819,9 +1826,11 @@ document.addEventListener("DOMContentLoaded", () => {
         lastSheetUrl: url,
         availableFields: meta.fields,
         availableStatuses: meta.statuses,
-        sheetHeaders: detectedSheetHeaders
+        sheetHeaders: detectedSheetHeaders,
+        columnMapping: columnMapping,
+        stepDefinitions: stepDefinitions
       });
-      setSettingsMessage(`✅ Quét thành công: ${meta.fields.length} lĩnh vực, ${meta.statuses.length} trạng thái, ${detectedSheetHeaders.length} cột từ ${fmtNum(meta.totalRows)} hồ sơ. Bấm "Lưu" để áp dụng.`, "success");
+      setSettingsMessage(`✅ Quét thành công: ${meta.fields.length} lĩnh vực, ${meta.statuses.length} trạng thái (${meta.defaultActiveStatuses.length} đang xử lý), ${detectedSheetHeaders.length} cột từ ${fmtNum(meta.totalRows)} hồ sơ. Bấm "Lưu" để áp dụng.`, "success");
     } catch (err) {
       setSettingsMessage(`❌ Lỗi quét dữ liệu: ${err.message}`, "error");
     } finally {
@@ -1837,13 +1846,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const holidaysText = document.getElementById("settings-extra-holidays").value.trim();
 
-    // Thu thập Column Mapping
+    // Thu thập Column Mapping: nếu có dropdown hiển thị thì lấy, nếu không thì tự nhận diện theo Header
     const newMapping = {};
     document.querySelectorAll(".col-mapping-select").forEach((sel) => {
       const field = sel.dataset.field;
       if (field) newMapping[field] = sel.value;
     });
-    columnMapping = newMapping;
+    if (Object.keys(newMapping).length > 0) {
+      columnMapping = newMapping;
+    } else if (detectedSheetHeaders && detectedSheetHeaders.length > 0) {
+      columnMapping = HSMC.detectColumnMapping(detectedSheetHeaders);
+    }
 
     // Thu thập Step Tracking
     const isStepTrackingEnabled = document.getElementById("settings-enable-step-tracking").checked;
@@ -1860,7 +1873,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
     enableStepTracking = isStepTrackingEnabled;
-    stepDefinitions = newSteps.length ? newSteps : HSMC.DEFAULT_WORKFLOW_STEPS.map((s) => Object.assign({}, s));
+    stepDefinitions = newSteps.length ? newSteps : HSMC.detectWorkflowSteps(detectedSheetHeaders, columnMapping);
 
     const payload = {
       sheetUrl: url,
