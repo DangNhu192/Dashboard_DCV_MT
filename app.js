@@ -489,9 +489,10 @@ async function refreshNow(opts) {
   return res;
 }
 
-/** Tự động làm mới khi dữ liệu cũ hơn chu kỳ đã cài đặt */
+/** Tự động làm mới khi dữ liệu cũ hơn chu kỳ đã cài đặt hoặc phiên bản tính toán thay đổi */
 function isDataStale() {
   if (!lastCheckTimeIso) return true;
+  if (!allDossiers || allDossiers.length === 0 || allDossiers[0].calcVersion !== HSMC.CALC_VERSION) return true;
   const t = new Date(lastCheckTimeIso).getTime();
   if (isNaN(t)) return true;
   const interval = Math.max(1, Number(checkIntervalMin) || HSMC.DEFAULTS.checkInterval);
@@ -1414,8 +1415,39 @@ function loadAllData(callback) {
       sourceEl.textContent = `Nguồn: Google Sheet ${id ? id.slice(0, 10) + "…" : ""} · trang 'Nhập DL' · ${IS_DESKTOP ? "Bản Desktop" : "Tiện ích trình duyệt"}`;
     }
 
+    // Nếu phiên bản tính toán cũ (ví dụ trước khi sửa logic ngày làm việc), tự tính lại ngay trong RAM
+    if (allDossiers && allDossiers.length > 0 && allDossiers[0].calcVersion !== HSMC.CALC_VERSION) {
+      storageGet(["calcMethod", "extraHolidays"]).then((cfg) => {
+        const isWorking = (cfg.calcMethod || HSMC.DEFAULTS.calcMethod) !== "calendar_days";
+        const holidaySet = HSMC.parseHolidayList(cfg.extraHolidays === undefined ? HSMC.DEFAULT_EXTRA_HOLIDAYS : cfg.extraHolidays);
+        const now = new Date();
+        const recalcItem = (item) => {
+          const ds = HSMC.parseCustomDate(item.ngayTiepNhan, 8, 0, 0);
+          const de = HSMC.parseCustomDate(item.ngayHenTra, 17, 0, 0);
+          if (de) {
+            if (isWorking) {
+              item.remainingDays = HSMC.calculateWorkingDays(now, de, holidaySet);
+              if (ds) {
+                const w = HSMC.calculateWorkingDays(ds, de, holidaySet);
+                item.totalDays = w > 0 ? w : 0.5;
+              }
+            } else {
+              item.remainingDays = Math.round(((de.getTime() - now.getTime()) / 86400000) * 10) / 10;
+              if (ds) {
+                item.totalDays = Math.max(0.5, Math.round(((de.getTime() - ds.getTime()) / 86400000) * 10) / 10);
+              }
+            }
+          }
+          item.calcVersion = HSMC.CALC_VERSION;
+        };
+        allDossiers.forEach(recalcItem);
+        currentAlerts.forEach(recalcItem);
+        renderAlertsTable();
+        if (document.getElementById("view-lookup").style.display !== "none") renderLookupTable();
+      }).catch(() => {});
+    }
+
     renderAlertsTable();
-    populateLookupDropdowns();
     if (document.getElementById("view-lookup").style.display !== "none") renderLookupTable();
     if (document.getElementById("view-analytics").style.display !== "none") renderAnalytics();
     if (callback) callback();

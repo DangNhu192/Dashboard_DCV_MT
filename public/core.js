@@ -13,7 +13,8 @@
 
   const HSMC = {};
 
-  HSMC.VERSION = "1.1.1";
+  HSMC.VERSION = "1.1.2";
+  HSMC.CALC_VERSION = 2;
 
   HSMC.DEFAULT_SHEET_URL = "";
 
@@ -444,10 +445,22 @@
   /**
    * Số ngày làm việc giữa 2 mốc (đếm các ngày làm việc trong khoảng (start, end]).
    * Cùng một ngày làm việc = 0.5 ngày. Kết quả âm nếu end < start.
+   * Chuẩn hóa nghiệp vụ Một Cửa: Nếu mốc kết thúc rơi vào đầu giờ sáng (<= 08:00 AM, ví dụ 07:00, 07:30, 08:00),
+   * ngày đó không có thời gian xử lý nên mốc kết thúc làm việc được quy về cuối ngày làm việc liền trước.
    */
   HSMC.calculateWorkingDays = function (startDate, endDate, holidaySet) {
+    if (!startDate || !endDate) return 0;
     const dStart = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
     const dEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+    const endH = endDate.getHours();
+    const endM = endDate.getMinutes();
+    if (endH < 8 || (endH === 8 && endM === 0)) {
+      dEnd.setDate(dEnd.getDate() - 1);
+      while (HSMC.isNonWorkingDay(dEnd, holidaySet)) {
+        dEnd.setDate(dEnd.getDate() - 1);
+      }
+    }
 
     if (dStart.getTime() === dEnd.getTime()) {
       return HSMC.isNonWorkingDay(dStart, holidaySet) ? 0 : 0.5;
@@ -787,6 +800,7 @@
       item.remainingPercent =
         remainingRatio === null ? null : Math.max(0, Math.min(100, remainingRatio * 100)).toFixed(1);
       item.calcMethod = isWorkingDays ? "Ngày làm việc" : "Ngày tự nhiên";
+      item.calcVersion = HSMC.CALC_VERSION;
       item.currentStep = currentStep;
       item.delayedStep = delayedStep;
       item.stepDetails = stepDetails;
@@ -807,7 +821,7 @@
       return (a.remainingDays || 0) - (b.remainingDays || 0);
     });
 
-    return { allDossiers, alertRecords };
+    return { allDossiers, alertRecords, calcVersion: HSMC.CALC_VERSION };
   };
 
   /**

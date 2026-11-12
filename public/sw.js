@@ -2,7 +2,7 @@
  * Service Worker cho Hệ Thống Hồ Sơ Một Cửa (PWA)
  */
 
-const CACHE_NAME = "hsmc-cache-v1.1.2";
+const CACHE_NAME = "hsmc-cache-v1.1.3";
 const ASSETS_TO_CACHE = [
   "/",
   "/index.html",
