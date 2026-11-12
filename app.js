@@ -586,7 +586,7 @@ function renderAlertsTable() {
   const html = filtered.map((item) => {
     const isOverdue = item.alertStatus === "HẾT HẠN";
     return `<tr>
-      <td><button type="button" class="code" data-code="${escapeHtml(item.maHoSo)}">${escapeHtml(item.maHoSo)}</button></td>
+      <td><button type="button" class="code" data-code="${escapeHtml(item.maHoSo)}">${escapeHtml(item.maHoSo)}</button> <a href="${HSMC.buildDossierSearchUrl(item.maHoSo)}" target="_blank" rel="noopener noreferrer" class="link-portal" title="Mở trực tiếp trên Một Cửa điện tử" style="text-decoration:none;font-size:12px;opacity:0.8;margin-left:3px;">🌐</a></td>
       <td>${isOverdue ? `<span class="tag tag-danger">🔴 HẾT HẠN</span>` : `<span class="tag tag-warning">🟡 SẮP HẾT HẠN</span>`}</td>
       <td>${getStatusBadge(item.trangThaiHoSo)}</td>
       <td>${remainingText(item)}</td>
@@ -673,7 +673,7 @@ function renderLookupTable() {
       : "";
     return `<tr>
       <td class="cell-stt">${startIdx + i + 1}</td>
-      <td><button type="button" class="code" data-code="${escapeHtml(item.maHoSo)}">${escapeHtml(item.maHoSo)}</button></td>
+      <td><button type="button" class="code" data-code="${escapeHtml(item.maHoSo)}">${escapeHtml(item.maHoSo)}</button> <a href="${HSMC.buildDossierSearchUrl(item.maHoSo)}" target="_blank" rel="noopener noreferrer" class="link-portal" title="Mở trực tiếp trên Một Cửa điện tử" style="text-decoration:none;font-size:12px;opacity:0.8;margin-left:3px;">🌐</a></td>
       <td><b>${escapeHtml(citizen)}</b>${phone}</td>
       <td class="cell-proc" title="${escapeHtml(item.tenThuTuc)}">${escapeHtml(item.tenThuTuc || "---")}</td>
       <td>${escapeHtml(item.tenLinhVuc || "---")}</td>
@@ -966,7 +966,7 @@ function renderStatusDetailTable(base) {
 
   tbody.innerHTML = filtered.slice(start, start + STATUS_DETAIL_PAGE_SIZE).map((item, idx) => `<tr>
     <td class="cell-stt">${start + idx + 1}</td>
-    <td><button type="button" class="code" data-code="${escapeHtml(item.maHoSo)}">${escapeHtml(item.maHoSo)}</button></td>
+    <td><button type="button" class="code" data-code="${escapeHtml(item.maHoSo)}">${escapeHtml(item.maHoSo)}</button> <a href="${HSMC.buildDossierSearchUrl(item.maHoSo)}" target="_blank" rel="noopener noreferrer" class="link-portal" title="Mở trực tiếp trên Một Cửa điện tử" style="text-decoration:none;font-size:12px;opacity:0.8;margin-left:3px;">🌐</a></td>
     <td class="cell-proc" title="${escapeHtml(item.tenThuTuc)}"><b>${escapeHtml(item.tenThuTuc)}</b></td>
     <td>${escapeHtml(item.tenLinhVuc || "-")}</td>
     <td><div>${escapeHtml(item.nguoiNop || item.chuHoSo || "-")}</div><div class="cell-sub">${escapeHtml(item.soDienThoai || "")}</div></td>

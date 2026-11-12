@@ -343,7 +343,17 @@
     const defM = defaultMinute !== undefined ? defaultMinute : 0;
     const defS = defaultSecond !== undefined ? defaultSecond : 0;
 
-    const vn = cleaned.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[\s,]+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+    // Hỗ trợ số sê-ri ngày tháng Excel (VD: 46153.29846) nếu ô bị mất định dạng hiển thị
+    if (/^\d{5}(?:\.\d+)?$/.test(cleaned)) {
+      const serial = parseFloat(cleaned);
+      if (serial >= 30000 && serial <= 65000) {
+        const ms = (serial - 25569) * 86400 * 1000;
+        const d = new Date(ms);
+        if (!isNaN(d.getTime())) return d;
+      }
+    }
+
+    const vn = cleaned.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})(?:[\s,]+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
     if (vn) {
       const hasTime = vn[4] !== undefined;
       return buildDate(
@@ -696,8 +706,8 @@
             status = HSMC.PROGRESS.OVERDUE;
           } else {
             const threshold = totalDays !== null && totalDays < 7 ? thresholdUnder7 : thresholdOver7;
-            // Cảnh báo Sắp hết hạn khi tỷ lệ chạm ngưỡng HOẶC khi chỉ còn <= 1 ngày làm việc
-            if (remainingRatio !== null && (remainingRatio <= threshold || remainingDays <= 1)) {
+            // Cảnh báo Sắp hết hạn khi tỷ lệ chạm ngưỡng HOẶC khi chỉ còn <= 1 ngày làm việc (kể cả khi thiếu ngày tiếp nhận)
+            if ((remainingRatio !== null && remainingRatio <= threshold) || (remainingDays !== null && remainingDays <= 1 && remainingDays > 0)) {
               status = HSMC.PROGRESS.NEAR;
             }
           }
