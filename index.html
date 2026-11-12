@@ -1,0 +1,2550 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bản Desktop thay giá trị này bằng mã bảo vệ phiên khi phục vụ trang; bản tiện ích bỏ qua -->
+  <meta name="hsmc-token" content="__HSMC_API_TOKEN__">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" type="image/png" href="icon48.png">
+  <title>Hồ Sơ Một Cửa - Theo Dõi, Tra Cứu & Báo Cáo</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --border-hover: #cbd5e1;
+      
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-subtle: #eff6ff;
+      --primary-border: #bfdbfe;
+
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --danger-bg: #fee2e2;
+      --danger-border: #fca5a5;
+
+      --warning: #d97706;
+      --warning-hover: #b45309;
+      --warning-bg: #fef3c7;
+      --warning-border: #fde68a;
+
+      --success: #16a34a;
+      --success-hover: #15803d;
+      --success-bg: #dcfce7;
+      --success-border: #bbf7d0;
+
+      --info: #0284c7;
+      --info-bg: #e0f2fe;
+      --info-border: #bae6fd;
+
+      --orange: #ea580c;
+      --orange-bg: #ffedd5;
+      --orange-border: #fed7aa;
+
+      --header-bg: #1e293b;
+      --header-surface: #334155;
+      --header-border: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text-main);
+      font-size: 13px;
+      line-height: 1.45;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Navigation Bar */
+    .top-navbar {
+      background: var(--header-bg);
+      color: #ffffff;
+      padding: 8px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 100;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      font-size: 24px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-badge {
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(37, 99, 235, 0.4);
+      border: 1px solid rgba(147, 197, 253, 0.5);
+      color: #bfdbfe;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .brand .subtitle {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* Nav Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .tab-btn {
+      background: var(--header-surface);
+      color: #cbd5e1;
+      border: 1px solid var(--header-border);
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-btn:hover {
+      background: #475569;
+      color: #ffffff;
+      border-color: #64748b;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: #3b82f6;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+    .btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-sheet {
+      background: #10b981;
+      color: #ffffff;
+    }
+    .btn-sheet:hover {
+      background: #059669;
+    }
+    .btn-outline-nav {
+      background: var(--header-surface);
+      color: #f1f5f9;
+      border: 1px solid var(--header-border);
+    }
+    .btn-outline-nav:hover {
+      background: #475569;
+      border-color: #64748b;
+    }
+
+    /* Main Container */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 18px;
+      background: var(--bg);
+    }
+
+    /* Banner Missing Sheet */
+    .banner-warning {
+      background: #fffbeb;
+      border: 1px solid #fef08a;
+      border-left: 4px solid #eab308;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      color: #854d0e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    /* Summary Bar & Badges */
+    .summary-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .badges-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .badge-pill {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .badge-danger {
+      background: var(--danger-bg);
+      color: var(--danger-hover);
+      border: 1px solid var(--danger-border);
+    }
+    .badge-warning {
+      background: var(--warning-bg);
+      color: var(--warning-hover);
+      border: 1px solid var(--warning-border);
+    }
+    .badge-total {
+      background: #e2e8f0;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* Search & Filter Toolbar */
+    .toolbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .search-input-wrap {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+    }
+    .search-input-wrap input {
+      width: 100%;
+      padding: 7px 12px 7px 32px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 12.5px;
+      background: #ffffff;
+      color: var(--text-main);
+      transition: all 0.15s ease;
+    }
+    .search-input-wrap input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      font-size: 13px;
+    }
+    select.filter-select {
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 12px;
+      background: #ffffff;
+      color: #1e293b;
+      cursor: pointer;
+      max-width: 220px;
+      font-weight: 500;
+      transition: border-color 0.15s ease;
+    }
+    select.filter-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Table Styles */
+    .table-container {
+      background: var(--surface);
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th {
+      background: #f8fafc;
+      color: #334155;
+      padding: 9px 12px;
+      font-weight: 700;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 8.5px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+      font-size: 12.5px;
+    }
+    tr:hover td {
+      background: #f8fafc;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Tags & Labels */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-weight: 700;
+      font-size: 11px;
+      white-space: nowrap;
+      line-height: 1.25;
+    }
+    .tag-danger {
+      background: var(--danger-bg);
+      color: var(--danger-hover);
+      border: 1px solid var(--danger-border);
+    }
+    .tag-warning {
+      background: var(--warning-bg);
+      color: var(--warning-hover);
+      border: 1px solid var(--warning-border);
+    }
+    .tag-success {
+      background: var(--success-bg);
+      color: var(--success-hover);
+      border: 1px solid var(--success-border);
+    }
+    .tag-primary {
+      background: var(--primary-subtle);
+      color: #1d4ed8;
+      border: 1px solid var(--primary-border);
+    }
+    .tag-info {
+      background: var(--info-bg);
+      color: #0369a1;
+      border: 1px solid var(--info-border);
+    }
+    .tag-orange {
+      background: var(--orange-bg);
+      color: #c2410c;
+      border: 1px solid var(--orange-border);
+    }
+    .tag-neutral {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
+    .code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 700;
+      color: #1e40af;
+      background: #eff6ff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid #dbeafe;
+    }
+    .code:hover {
+      background: #dbeafe;
+      text-decoration: underline;
+    }
+
+    /* Pagination */
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 14px;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+    }
+    .page-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 5px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: #334155;
+      transition: all 0.15s ease;
+    }
+    .page-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .page-btn:not(:disabled):hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .page-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* ============================================================
+       STYLES CHO TAB THỐNG KÊ & BÁO CÁO (ANALYTICS & REPORTING)
+       ============================================================ */
+    .analytics-toolbar {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .analytics-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+    }
+    .date-input {
+      padding: 6px 9px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #1e293b;
+      background: #ffffff;
+      font-family: inherit;
+    }
+    .date-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Bento Grid KPI Cards */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .bento-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 12px 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .bento-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+    }
+    .bento-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+    .bento-card.total::before { background: #3b82f6; }
+    .bento-card.success::before { background: #10b981; }
+    .bento-card.danger::before { background: #ef4444; }
+    .bento-card.warning::before { background: #f59e0b; }
+    .bento-card.processing::before { background: #0ea5e9; }
+
+    .bento-title {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .bento-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+    .bento-sub {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    /* Sub-tabs trong Thống kê */
+    .analytics-subnav {
+      display: flex;
+      gap: 6px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 12px;
+      padding-bottom: 2px;
+    }
+    .analytics-subtab-btn {
+      background: none;
+      border: none;
+      padding: 7px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      position: relative;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.15s ease;
+    }
+    .analytics-subtab-btn:hover {
+      color: var(--primary);
+      background: #f1f5f9;
+    }
+    .analytics-subtab-btn.active {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .analytics-subtab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    /* Card Box Thống kê */
+    .report-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      margin-bottom: 14px;
+    }
+    .report-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--surface-subtle);
+    }
+    .report-card-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* Các số liệu có thể nhấp chuột để chuyển sang xem danh sách chi tiết (Interactive Drill-down) */
+    .stat-cell-clickable {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+    .stat-cell-clickable:hover {
+      transform: translateY(-1.5px) scale(1.08);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+      text-decoration: underline;
+    }
+    .bento-card {
+      cursor: pointer;
+      user-select: none;
+    }
+    .bento-card:hover .bento-title span:last-child {
+      transform: scale(1.2);
+      transition: transform 0.2s ease;
+    }
+
+    /* Thanh chọn nhanh Tình trạng hồ sơ (Status Pills Bar) */
+    .status-pills-bar {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      padding: 2px 0;
+    }
+    .status-pill-btn {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: #475569;
+      padding: 6px 13px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      user-select: none;
+    }
+    .status-pill-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+    .status-pill-btn .pill-count {
+      background: #f1f5f9;
+      color: #475569;
+      padding: 1px 7px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .status-pill-btn.active {
+      background: #1e293b;
+      color: #ffffff;
+      border-color: #1e293b;
+      box-shadow: 0 2px 6px rgba(30, 41, 59, 0.25);
+    }
+    .status-pill-btn.active .pill-count {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+    .status-pill-btn.pill-danger.active {
+      background: #dc2626;
+      border-color: #dc2626;
+      box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);
+    }
+    .status-pill-btn.pill-warning.active {
+      background: #d97706;
+      border-color: #d97706;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.35);
+    }
+    .status-pill-btn.pill-info.active {
+      background: #0284c7;
+      border-color: #0284c7;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+    }
+    .status-pill-btn.pill-success.active {
+      background: #16a34a;
+      border-color: #16a34a;
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.35);
+    }
+    .status-pill-btn.pill-orange.active {
+      background: #ea580c;
+      border-color: #ea580c;
+      box-shadow: 0 2px 6px rgba(234, 88, 12, 0.35);
+    }
+    .status-pill-btn.pill-neutral.active {
+      background: #475569;
+      border-color: #475569;
+      box-shadow: 0 2px 6px rgba(71, 85, 105, 0.35);
+    }
+
+    /* Thanh tiến độ trực quan % (Mini Progress Bar) */
+    .visual-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 120px;
+    }
+    .visual-bar-track {
+      flex: 1;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .visual-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px;
+    }
+    .visual-bar-text {
+      font-size: 11px;
+      font-weight: 600;
+      color: #475569;
+      width: 40px;
+      text-align: right;
+    }
+
+    /* ============================================================
+       STYLES CHO TAB CÀI ĐẶT (SETTINGS VIEW)
+       ============================================================ */
+    .settings-container {
+      max-width: 880px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 5px;
+      font-size: 12.5px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 12.5px;
+      color: #1e293b;
+      background: #ffffff;
+      box-sizing: border-box;
+      transition: all 0.15s ease;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+    .hint {
+      font-size: 11.5px;
+      color: #64748b;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 7px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      padding: 9px;
+      border-radius: 6px;
+      background: #f8fafc;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: #334155;
+      cursor: pointer;
+    }
+    .checkbox-item input {
+      cursor: pointer;
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Modal Details & Desktop */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 680px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-header {
+      background: var(--header-bg);
+      color: #ffffff;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 9px 9px 0 0;
+    }
+    .modal-body {
+      padding: 16px 18px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .modal-footer {
+      padding: 10px 18px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      text-align: right;
+      border-radius: 0 0 9px 9px;
+    }
+
+    /* ============================================================
+       STYLES CHO TAB HƯỚNG DẪN SỬ DỤNG (GUIDE VIEW)
+       ============================================================ */
+    .guide-container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 30px;
+    }
+    .guide-hero {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 20px 24px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .guide-hero h2 {
+      margin: 0 0 6px 0;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .guide-hero p {
+      margin: 0;
+      font-size: 13px;
+      color: #94a3b8;
+      max-width: 620px;
+      line-height: 1.5;
+    }
+    .guide-nav-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: #ffffff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .guide-nav-btn {
+      padding: 7px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .guide-nav-btn:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+    .guide-nav-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+    .guide-section {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .guide-section.active {
+      display: flex;
+    }
+    .guide-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .guide-card-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .guide-step-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px dashed #f1f5f9;
+    }
+    .guide-step-item:last-child {
+      border-bottom: none;
+    }
+    .guide-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 12.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .guide-step-content {
+      flex: 1;
+    }
+    .guide-step-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .guide-step-desc {
+      font-size: 12.5px;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .guide-callout {
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin: 8px 0;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .guide-callout.tip {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+    .guide-callout.info {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+    .guide-callout.warning {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+    .code-pill {
+      font-family: Consolas, "Courier New", monospace;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      color: #0f172a;
+    }
+    .faq-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .faq-question {
+      padding: 12px 16px;
+      background: #f8fafc;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    .faq-question:hover {
+      background: #f1f5f9;
+    }
+    .faq-answer {
+      padding: 12px 16px;
+      font-size: 12.5px;
+      color: #475569;
+      line-height: 1.55;
+      border-top: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    /* ============================================================
+       HỆ THỐNG NÚT ĐỒNG BỘ (v1.1) - mọi nút dùng chung chiều cao,
+       bo góc, cỡ chữ; biến thể chỉ khác màu.
+       ============================================================ */
+    :root {
+      --ctl-h: 32px;
+      --ctl-h-sm: 28px;
+      --ctl-h-xs: 26px;
+      --radius: 6px;
+    }
+    .btn, .page-btn, .seg-btn {
+      height: var(--ctl-h);
+      padding: 0 14px;
+      border-radius: var(--radius);
+      font-size: 12.5px;
+      font-weight: 600;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn:disabled, .page-btn:disabled, .seg-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn:focus-visible, .page-btn:focus-visible, .seg-btn:focus-visible, .tab-btn:focus-visible,
+    .code:focus-visible, .stat-cell-clickable:focus-visible, .bento-card:focus-visible, .status-pill-btn:focus-visible,
+    .viz-seg:focus-visible, .viz-hseg:focus-visible, .viz-hbar-name:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+    .btn-sm { height: var(--ctl-h-sm); padding: 0 11px; font-size: 12px; }
+    .btn-xs { height: var(--ctl-h-xs); padding: 0 9px; font-size: 11.5px; }
+    .btn-lg { height: 38px; padding: 0 20px; font-size: 13px; }
+
+    .btn-primary { background: var(--primary); color: #fff; border: 1px solid var(--primary); }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
+    .btn-success, .btn-sheet { background: #059669; color: #fff; border: 1px solid #059669; }
+    .btn-success:hover:not(:disabled), .btn-sheet:hover:not(:disabled) { background: #047857; border-color: #047857; }
+    .btn-secondary { background: #fff; color: #1e293b; border: 1px solid #cbd5e1; }
+    .btn-secondary:hover:not(:disabled) { background: #f1f5f9; border-color: #94a3b8; }
+    .btn-outline-nav { background: var(--header-surface); color: #f1f5f9; border: 1px solid var(--header-border); }
+    .btn-outline-nav:hover:not(:disabled) { background: #475569; border-color: #64748b; }
+    .btn-on-dark { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.28); }
+    .btn-on-dark:hover:not(:disabled) { background: rgba(255,255,255,0.2); }
+
+    .page-btn { background: #fff; border: 1px solid #cbd5e1; color: #334155; padding: 0 12px; }
+
+    /* Nhóm nút chọn 1 trong n (bộ lọc) */
+    .seg-group {
+      display: inline-flex;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 2px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .seg-btn {
+      height: calc(var(--ctl-h) - 6px);
+      border: none;
+      background: transparent;
+      color: #475569;
+      padding: 0 12px;
+      border-radius: 4px;
+    }
+    .seg-btn:hover:not(.active) { background: #f1f5f9; color: #0f172a; }
+    .seg-btn.active { background: #1e293b; color: #fff; }
+    .seg-group.compact .seg-btn { height: 22px; padding: 0 9px; font-size: 11.5px; }
+
+    .toolbar select.filter-select, .toolbar input, .analytics-toolbar .date-input, .analytics-toolbar select {
+      height: var(--ctl-h);
+    }
+    .search-input-wrap input { height: var(--ctl-h); }
+    select.filter-select { padding: 0 10px; }
+    .date-input { padding: 0 9px; }
+    .toolbar { align-items: center; }
+    .toolbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    /* Thanh tiêu đề gọn, tự xuống dòng khi cửa sổ hẹp */
+    .top-navbar { flex-wrap: wrap; gap: 8px 16px; padding: 8px 16px; }
+    .brand h1 { font-size: 14.5px; }
+    .nav-tabs { flex-wrap: wrap; gap: 4px; }
+    .tab-btn { height: var(--ctl-h); padding: 0 12px; border-radius: var(--radius); font-size: 12.5px; }
+    .tab-btn .badge-pill { padding: 1px 7px; font-size: 11px; box-shadow: none; }
+    .nav-actions { gap: 6px; flex-wrap: wrap; }
+    .btn-install { background: #0284c7; border-color: #0284c7; color: #fff; }
+    .btn-install:hover:not(:disabled) { background: #0369a1; border-color: #0369a1; }
+    /* Hàng 1: thương hiệu + nút hành động; hàng 2: các tab (gộp 1 hàng khi màn hình rất rộng) */
+    .brand { flex: 1 1 auto; min-width: 0; }
+    .nav-actions { order: 2; }
+    .nav-tabs { order: 3; width: 100%; }
+    @media (min-width: 1560px) {
+      .nav-tabs { order: 2; width: auto; }
+      .nav-actions { order: 3; }
+    }
+    @media (max-width: 760px) {
+      .brand .subtitle { display: none; }
+    }
+
+    /* Tiện ích chữ & ô bảng */
+    .muted { color: #94a3b8; }
+    .text-danger { color: #b91c1c; font-weight: 700; }
+    .text-warning { color: #b45309; font-weight: 700; }
+    .center { text-align: center; }
+    .num { text-align: right; font-weight: 700; color: #1e293b; font-variant-numeric: tabular-nums; }
+    .num.total { color: var(--primary); }
+    .cell-stt { color: #64748b; font-size: 11px; width: 44px; }
+    .cell-proc { max-width: 280px; font-weight: 500; }
+    .cell-proc-wide { max-width: 340px; }
+    .cell-date { white-space: nowrap; font-size: 11.5px; color: #475569; }
+    .cell-sub { color: #64748b; font-size: 11px; }
+    .cell-empty { text-align: center; color: #64748b; padding: 20px !important; }
+    .row-total td { background: #f8fafc; font-weight: 800; }
+    button.code { font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .stat-cell-clickable.tag { border-radius: 6px; }
+
+    .banner-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-left: 4px solid #dc2626;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      color: #7f1d1d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 12.5px;
+    }
+    .empty-state { text-align: center; padding: 40px; color: #64748b; }
+    .empty-state .empty-icon { font-size: 32px; margin-bottom: 8px; }
+    .empty-state .empty-title { font-weight: 700; color: #16a34a; font-size: 15px; }
+
+    /* Bento: con trỏ & phụ đề */
+    .bento-card { cursor: pointer; }
+    .bento-value { font-variant-numeric: normal; }
+
+    /* Cài đặt */
+    .settings-actions { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 6px; }
+    .settings-msg { text-align: right; font-size: 12.5px; font-weight: 600; min-height: 18px; padding-bottom: 20px; }
+    .settings-msg.msg-success { color: #15803d; }
+    .settings-msg.msg-error { color: #b91c1c; }
+    .settings-msg.msg-info { color: #1d4ed8; }
+    .card-actions { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    textarea.form-control { resize: vertical; min-height: 92px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; line-height: 1.5; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 760px) { .form-row-2 { grid-template-columns: 1fr; } }
+
+    /* Modal */
+    .modal-close {
+      background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;
+      width: 32px; height: 32px; border-radius: 6px;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.12); }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .detail-grid.three { grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 12px; margin-bottom: 0; }
+    .detail-label { font-size: 11px; color: #64748b; font-weight: 700; margin-bottom: 2px; }
+    .detail-value { font-size: 13px; font-weight: 600; color: #1e293b; }
+    .detail-value.strong { font-size: 13.5px; font-weight: 700; }
+    .detail-value.primary { color: #1d4ed8; }
+    .detail-block { margin-bottom: 12px; }
+    .detail-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+    .detail-progress { margin-top: 10px; padding-top: 8px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .detail-note { font-size: 12px; color: #475569; background: #fff; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; }
+    .mode-only-desktop { display: none; }
+    body.mode-desktop .mode-only-desktop { display: block; }
+    body.mode-desktop span.mode-only-desktop { display: inline; }
+    body.mode-desktop .mode-only-extension { display: none; }
+
+    /* Toast */
+    #toast-container { position: fixed; right: 16px; bottom: 16px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; max-width: 420px; }
+    .toast { background: #1e293b; color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 12.5px; box-shadow: 0 6px 18px rgba(0,0,0,0.18); transition: opacity 0.4s ease, transform 0.4s ease; }
+    .toast-success { border-left: 4px solid #22c55e; }
+    .toast-error { border-left: 4px solid #ef4444; }
+    .toast-info { border-left: 4px solid #3b82f6; }
+    .toast-hide { opacity: 0; transform: translateY(6px); }
+
+    /* ============================================================
+       BIỂU ĐỒ TRỰC QUAN (charts.js)
+       ============================================================ */
+    .viz-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    @media (max-width: 900px) { .viz-grid { grid-template-columns: 1fr; } }
+    .viz-card { background: #fff; border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); min-width: 0; }
+    .viz-card.viz-wide { grid-column: 1 / -1; }
+    .viz-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+    .viz-card-title { font-size: 13.5px; font-weight: 700; color: #0f172a; }
+    .viz-card-sub { font-size: 11.5px; color: #64748b; margin-top: 2px; }
+    .viz-empty { color: #64748b; font-size: 12.5px; text-align: center; padding: 36px 10px; }
+    .viz-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 12px; color: #475569; }
+    .viz-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .viz-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+    .viz-segbar { display: flex; gap: 2px; height: 28px; width: 100%; }
+    .viz-seg { border: none; padding: 0 8px; border-radius: 4px; min-width: 2px; display: flex; align-items: center; cursor: pointer; overflow: visible; font-family: inherit; }
+    .viz-seg:hover { filter: brightness(1.08); }
+    .viz-seg-label { font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+
+    .viz-hbars { display: flex; flex-direction: column; gap: 8px; }
+    .viz-hbar-row { display: grid; grid-template-columns: minmax(120px, 34%) 1fr 52px; align-items: center; gap: 10px; }
+    .viz-hbar-name { border: none; background: none; padding: 0; text-align: left; font-size: 12px; color: #334155; font-family: inherit; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .viz-hbar-name:hover { color: var(--primary); text-decoration: underline; }
+    .viz-hbar-track { height: 18px; }
+    .viz-hbar-fill { display: flex; gap: 2px; height: 100%; min-width: 3px; }
+    .viz-hseg { border: none; padding: 0; height: 100%; min-width: 2px; cursor: pointer; border-radius: 0; }
+    .viz-hseg:last-child { border-radius: 0 4px 4px 0; }
+    .viz-hseg:hover { filter: brightness(1.1); }
+    .viz-hbar-total { font-size: 12px; font-weight: 700; color: #0f172a; text-align: right; font-variant-numeric: tabular-nums; }
+
+    .viz-card svg { display: block; overflow: visible; font-family: inherit; }
+    .viz-card svg text { font-variant-numeric: tabular-nums; }
+    .viz-hit { cursor: default; outline: none; }
+    .viz-hit:focus { fill: rgba(37, 99, 235, 0.06); }
+
+    .viz-tooltip { position: fixed; z-index: 3000; display: none; pointer-events: none; background: #0f172a; color: #f8fafc; padding: 8px 10px; border-radius: 6px; font-size: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.2); max-width: 320px; }
+    .viz-tooltip-title { font-size: 11.5px; color: #cbd5e1; margin-bottom: 4px; }
+    .viz-tooltip-row { display: flex; align-items: center; gap: 6px; line-height: 1.6; }
+    .viz-tooltip-row b { font-size: 12.5px; color: #fff; }
+    .viz-tooltip-label { color: #cbd5e1; }
+    .viz-tooltip-key { width: 10px; height: 3px; border-radius: 2px; display: inline-block; }
+
+    .viz-table-wrap { max-height: 360px; overflow: auto; border: 1px solid var(--border); border-radius: 6px; }
+    .viz-table th { position: sticky; top: 0; }
+    .viz-table td, .viz-table th { padding: 6px 10px; font-size: 12px; }
+
+    /* ============================================================
+       STYLES CHO ÁNH XẠ CỘT & GIÁM SÁT QUY TRÌNH TỪNG BƯỚC
+       ============================================================ */
+    .col-mapping-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .col-mapping-item {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: border-color 0.15s ease;
+    }
+    .col-mapping-item:hover {
+      border-color: var(--border-hover);
+    }
+    .col-mapping-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .col-mapping-req {
+      color: var(--danger);
+      font-weight: 700;
+    }
+    .col-mapping-select {
+      width: 90px;
+      padding: 5px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: #f8fafc;
+      cursor: pointer;
+    }
+    .col-mapping-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+    }
+    .toggle-switch-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .toggle-switch-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .toggle-switch-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #cbd5e1;
+      transition: .25s;
+      border-radius: 26px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: var(--primary);
+    }
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Steps Table */
+    .steps-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+      background: #ffffff;
+    }
+    .steps-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .steps-table th {
+      background: #f1f5f9;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 700;
+      color: #334155;
+      border-bottom: 1px solid var(--border);
+    }
+    .steps-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .steps-table tr:last-child td {
+      border-bottom: none;
+    }
+    .step-input-text {
+      width: 100%;
+      padding: 5px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .step-select-col {
+      width: 90px;
+      padding: 5px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Timeline in Modal */
+    .step-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .step-timeline-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      font-size: 12px;
+    }
+    .step-timeline-item.COMPLETED {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+    .step-timeline-item.IN_PROGRESS {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+    }
+    .step-timeline-item.DELAYED {
+      border-color: #fca5a5;
+      background: #fef2f2;
+    }
+    .step-timeline-item.PENDING {
+      border-color: #e2e8f0;
+      background: #f8fafc;
+      color: #94a3b8;
+    }
+
+    @media print {
+      .top-navbar, .analytics-toolbar, .analytics-subnav, .viz-card-head .btn { display: none !important; }
+      body { height: auto; overflow: visible; }
+      .main-content { overflow: visible; }
+    }
+  </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1e293b">
+  <link rel="apple-touch-icon" href="/icons/icon192.png">
+  <link rel="icon" type="image/png" href="/icons/icon48.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hồ Sơ Một Cửa">
+</head>
+<body>
+  <!-- Thanh điều hướng trên cùng -->
+  <header class="top-navbar">
+    <div class="brand">
+      <span class="brand-icon">🚀</span>
+      <div>
+        <h1>HỒ SƠ MỘT CỬA · THEO DÕI, TRA CỨU & BÁO CÁO</h1>
+        <div class="subtitle" id="data-source-text">Nguồn: Google Sheets (Dữ liệu Một cửa điện tử)</div>
+      </div>
+    </div>
+
+    <!-- 5 tab chức năng -->
+    <nav class="nav-tabs" role="tablist" aria-label="Chức năng">
+      <button type="button" class="tab-btn active" id="tab-alerts-btn" role="tab" aria-selected="true">
+        <span>🚨 Cảnh báo</span>
+        <span class="badge-pill badge-danger" id="nav-alert-count">0</span>
+      </button>
+      <button type="button" class="tab-btn" id="tab-lookup-btn" role="tab" aria-selected="false">
+        <span>🔍 Tra cứu</span>
+        <span class="badge-pill badge-total" id="nav-all-count">0</span>
+      </button>
+      <button type="button" class="tab-btn" id="tab-analytics-btn" role="tab" aria-selected="false"><span>📊 Thống kê</span></button>
+      <button type="button" class="tab-btn" id="tab-settings-btn" role="tab" aria-selected="false"><span>⚙️ Cài đặt</span></button>
+      <button type="button" class="tab-btn" id="tab-guide-btn" role="tab" aria-selected="false"><span>📖 Hướng dẫn</span></button>
+    </nav>
+
+    <!-- Hành động nhanh: cùng kích thước -->
+    <div class="nav-actions">
+      <button type="button" id="btn-refresh" class="btn btn-outline-nav" title="Tải lại dữ liệu từ Google Sheet ngay">🔄 Cập nhật</button>
+      <button type="button" id="btn-open-sheet" class="btn btn-success" title="Mở trang tính Google Sheet">📄 Mở Sheet</button>
+      <button type="button" id="btn-pwa-install" class="btn btn-install" style="display: none;" title="Cài đặt ứng dụng lên máy tính/điện thoại">📲 Cài App PWA</button>
+        <button type="button" id="btn-web-notify-toggle" class="btn btn-secondary btn-sm" title="Bật/Tắt thông báo đẩy trên trình duyệt">🔔 Bật thông báo</button>
+    </div>
+  </header>
+
+  <!-- Khung nội dung chính -->
+  <main class="main-content">
+    <!-- Cảnh báo nếu chưa cấu hình link sheet -->
+    <div id="banner-sheet-missing" class="banner-warning" style="display: none;">
+      <div>
+        <b>⚠️ Chưa cấu hình link Google Sheet:</b> Chưa có dữ liệu để theo dõi và tra cứu. Vui lòng chuyển sang tab <b>Cài đặt</b> để dán đường link trang tính.
+      </div>
+      <button type="button" id="btn-go-settings-tab" class="btn btn-success btn-sm">⚙️ Mở Cài đặt</button>
+    </div>
+
+    <!-- Lỗi lần tải dữ liệu gần nhất -->
+    <div id="banner-error" class="banner-error" style="display: none;" role="alert">
+      <div><b>❌ Lần cập nhật gần nhất bị lỗi:</b> <span id="banner-error-text"></span></div>
+      <button type="button" id="btn-error-settings" class="btn btn-secondary btn-sm">⚙️ Kiểm tra cài đặt</button>
+    </div>
+
+    <!-- VIEW 1: CẢNH BÁO ĐẾN HẠN -->
+    <section id="view-alerts">
+      <div class="summary-bar">
+        <div class="badges-group">
+          <div id="badge-expired" class="badge-pill badge-danger">● Hết hạn: 0</div>
+          <div id="badge-warning" class="badge-pill badge-warning">▲ Sắp hết hạn: 0</div>
+          <div id="badge-total-alerts" class="badge-pill badge-total">Tổng cảnh báo: 0</div>
+        </div>
+        <div id="last-check-text" style="color: #64748b; font-size: 12px;">Đang tải dữ liệu...</div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="alert-search-input" placeholder="Tìm nhanh trong danh sách cảnh báo (Mã hồ sơ, Tên thủ tục, Lĩnh vực)...">
+        </div>
+        <div class="seg-group" id="alert-filter-group" role="group" aria-label="Lọc cảnh báo">
+          <button type="button" class="seg-btn active" id="btn-filter-alert-all">Tất cả</button>
+          <button type="button" class="seg-btn" id="btn-filter-alert-expired">🔴 Hết hạn</button>
+          <button type="button" class="seg-btn" id="btn-filter-alert-near">🟡 Sắp hết hạn</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Mã hồ sơ</th>
+              <th>Cảnh báo hạn</th>
+              <th>Trạng thái (Cột L)</th>
+              <th>Thời gian còn lại</th>
+              <th>Lĩnh vực (Cột D)</th>
+              <th>Tên thủ tục hành chính</th>
+              <th>Hẹn trả</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="alerts-tbody">
+            <!-- Render động từ alert.js -->
+          </tbody>
+        </table>
+        <div id="alerts-empty" class="empty-state" style="display: none;">
+          <div class="empty-icon">🎉</div>
+          <div class="empty-title">Tuyệt vời! Không có hồ sơ nào quá hạn hoặc sắp hết hạn.</div>
+          <div style="font-size: 12.5px;">Tất cả hồ sơ thuộc các lĩnh vực và trạng thái theo dõi đều đảm bảo tiến độ.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: TRA CỨU TOÀN BỘ HỒ SƠ -->
+    <section id="view-lookup" style="display: none;">
+      <div class="toolbar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="lookup-search-input" placeholder="Tra cứu theo Mã hồ sơ, Người nộp, Số điện thoại, Tên thủ tục...">
+        </div>
+        
+        <!-- Bộ lọc Lĩnh vực -->
+        <select id="lookup-filter-field" class="filter-select">
+          <option value="">-- Tất cả Lĩnh vực --</option>
+        </select>
+
+        <!-- Bộ lọc Trạng thái Cột L -->
+        <select id="lookup-filter-status" class="filter-select">
+          <option value="">-- Tất cả Trạng thái --</option>
+        </select>
+
+        <!-- Bộ lọc Tiến độ theo công thức -->
+        <select id="lookup-filter-progress" class="filter-select">
+          <option value="">-- Tất cả Tiến độ --</option>
+          <option value="Hết hạn">🔴 Hết hạn</option>
+          <option value="Sắp hết hạn">🟡 Sắp hết hạn</option>
+          <option value="Đang xử lý">🔵 Đang xử lý</option>
+          <option value="Hoàn thành đúng hạn">🟢 Hoàn thành đúng hạn</option>
+          <option value="Hoàn thành trước hạn">🟢 Hoàn thành trước hạn</option>
+          <option value="Hoàn thành trễ hạn">🟠 Hoàn thành trễ hạn</option>
+          <option value="HT khác">⚪ Kết thúc khác (rút, không tiếp nhận…)</option>
+        </select>
+
+        <button type="button" id="btn-reset-filters" class="btn btn-secondary">Đặt lại</button>
+      </div>
+
+      <div class="summary-bar" style="margin-bottom: 8px;">
+        <div id="lookup-count-text" style="font-size: 12.5px; font-weight: 600; color: #475569;">Đang hiển thị 0 hồ sơ</div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;">STT</th>
+              <th>Mã hồ sơ</th>
+              <th>Người nộp / Điện thoại</th>
+              <th>Tên thủ tục hành chính</th>
+              <th>Lĩnh vực</th>
+              <th>Hẹn trả</th>
+              <th>Trạng thái</th>
+              <th id="th-lookup-step" style="display: none;">Bước quy trình</th>
+              <th>Tiến độ quy trình</th>
+              <th>Chi tiết</th>
+            </tr>
+          </thead>
+          <tbody id="lookup-tbody">
+            <!-- Render động từ alert.js -->
+          </tbody>
+        </table>
+        <div id="lookup-empty" class="empty-state" style="display: none;">
+          Không tìm thấy hồ sơ nào khớp với điều kiện tra cứu.
+        </div>
+        <div class="pagination-bar" id="lookup-pagination">
+          <button type="button" id="btn-prev-page" class="btn btn-secondary btn-sm">◀ Trang trước</button>
+          <span id="page-indicator" style="font-size: 12px; font-weight: 600; color: #475569;">Trang 1 / 1</span>
+          <button type="button" id="btn-next-page" class="btn btn-secondary btn-sm">Trang sau ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: THỐNG KÊ & BÁO CÁO -->
+    <section id="view-analytics" style="display: none;">
+      <!-- Bộ lọc dùng chung cho mọi thẻ, biểu đồ và bảng bên dưới -->
+      <div class="analytics-toolbar">
+        <div class="analytics-filter-group">
+          <span class="filter-label">📅 Từ</span>
+          <input type="date" id="analytics-date-from" class="date-input" aria-label="Từ ngày">
+          <span class="filter-label">đến</span>
+          <input type="date" id="analytics-date-to" class="date-input" aria-label="Đến ngày">
+          <span class="filter-label" style="margin-left: 6px;">🏛️ Lĩnh vực</span>
+          <select id="analytics-domain-select" class="filter-select" style="min-width: 200px;" aria-label="Lĩnh vực">
+            <option value="">-- Tất cả Lĩnh vực --</option>
+          </select>
+        </div>
+        <div class="toolbar-actions">
+          <button type="button" id="analytics-btn-last-30" class="btn btn-secondary btn-sm">30 ngày qua</button>
+          <button type="button" id="analytics-btn-this-month" class="btn btn-secondary btn-sm">Tháng này</button>
+          <button type="button" id="analytics-btn-all-time" class="btn btn-secondary btn-sm">Toàn thời gian</button>
+        </div>
+      </div>
+
+      <!-- Thẻ KPI (bấm để xem danh sách) -->
+      <div class="bento-grid">
+        <div class="bento-card total" id="bento-card-total" tabindex="0" role="button" title="Bấm để xem danh sách toàn bộ hồ sơ">
+          <div class="bento-title"><span>Tổng hồ sơ tiếp nhận</span><span>📦</span></div>
+          <div class="bento-value" id="kpi-total-records">0</div>
+          <div class="bento-sub" id="kpi-total-sub">Trong khoảng thời gian đã chọn</div>
+        </div>
+        <div class="bento-card success" id="bento-card-success" tabindex="0" role="button" title="Bấm để xem hồ sơ giải quyết đúng/trước hạn">
+          <div class="bento-title"><span>Tỷ lệ giải quyết đúng/trước hạn</span><span>🟢</span></div>
+          <div class="bento-value" id="kpi-completed-rate">0%</div>
+          <div class="bento-sub" id="kpi-completed-count">0 hồ sơ</div>
+        </div>
+        <div class="bento-card processing" id="bento-card-processing" tabindex="0" role="button" title="Bấm để xem hồ sơ đang xử lý">
+          <div class="bento-title"><span>Đang xử lý trong hạn</span><span>🔵</span></div>
+          <div class="bento-value" id="kpi-processing-count">0</div>
+          <div class="bento-sub">Chưa đến ngưỡng cảnh báo</div>
+        </div>
+        <div class="bento-card warning" id="bento-card-warning" tabindex="0" role="button" title="Bấm để xem hồ sơ sắp hết hạn">
+          <div class="bento-title"><span>Sắp hết hạn</span><span>🟡</span></div>
+          <div class="bento-value" id="kpi-near-count">0</div>
+          <div class="bento-sub">Cần tập trung đôn đốc</div>
+        </div>
+        <div class="bento-card danger" id="bento-card-danger" tabindex="0" role="button" title="Bấm để xem hồ sơ hết hạn">
+          <div class="bento-title"><span>Hết hạn chưa giải quyết</span><span>🔴</span></div>
+          <div class="bento-value" id="kpi-overdue-count">0</div>
+          <div class="bento-sub" id="kpi-late-sub">Cần giải trình & xử lý khẩn</div>
+        </div>
+      </div>
+
+      <!-- Phân hệ -->
+      <div class="analytics-subnav" role="tablist">
+        <button type="button" class="analytics-subtab-btn active" id="subtab-charts-btn">📈 Biểu đồ trực quan</button>
+        <button type="button" class="analytics-subtab-btn" id="subtab-domain-summary-btn">🏛️ Theo lĩnh vực</button>
+        <button type="button" class="analytics-subtab-btn" id="subtab-matrix-btn">🧮 Lĩnh vực × Tiến độ</button>
+        <button type="button" class="analytics-subtab-btn" id="subtab-procedure-detail-btn">📋 Theo thủ tục</button>
+        <button type="button" class="analytics-subtab-btn" id="subtab-status-detail-btn">📑 Danh sách chi tiết</button>
+      </div>
+
+      <!-- PHÂN HỆ 0: BIỂU ĐỒ -->
+      <div id="analytics-panel-charts">
+        <div id="analytics-charts"></div>
+      </div>
+
+      <!-- PHÂN HỆ 1: THEO LĨNH VỰC -->
+      <div id="analytics-panel-domain" class="report-card" style="display: none;">
+        <div class="report-card-header">
+          <div class="report-card-title">
+            <span>🏛️ Cơ cấu hồ sơ theo từng Lĩnh vực</span>
+            <span style="font-size: 11px; font-weight: 500; color: #64748b;">(Cột D, lọc theo ngày tiếp nhận Cột F)</span>
+          </div>
+          <span id="domain-summary-count-badge" class="tag tag-primary">0 lĩnh vực</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 50px;">STT</th>
+                <th>Tên lĩnh vực</th>
+                <th style="text-align: right; width: 140px;">Số lượng hồ sơ</th>
+                <th style="width: 220px;">Tỷ lệ % cơ cấu</th>
+              </tr>
+            </thead>
+            <tbody id="domain-summary-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PHÂN HỆ 2: MA TRẬN -->
+      <div id="analytics-panel-matrix" class="report-card" style="display: none;">
+        <div class="report-card-header">
+          <div class="report-card-title">
+            <span>🧮 Ma trận: Lĩnh vực × Tình trạng tiến độ</span>
+            <span style="font-size: 11px; font-weight: 500; color: #64748b;">(Cột D đối chiếu Cột N)</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="font-size: 11.5px; font-weight: 600; color: #475569;">Hiển thị theo</span>
+            <div class="seg-group compact" id="matrix-view-group">
+              <button type="button" id="matrix-btn-view-count" class="seg-btn active">Số lượng</button>
+              <button type="button" id="matrix-btn-view-percent" class="seg-btn">Tỷ lệ (%)</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Tên lĩnh vực</th>
+                <th class="center">Hết hạn</th>
+                <th class="center">Sắp hết hạn</th>
+                <th class="center">Đang xử lý</th>
+                <th class="center">HT trước hạn</th>
+                <th class="center">HT đúng hạn</th>
+                <th class="center">HT trễ hạn</th>
+                <th class="center" title="Kết thúc không có ngày kết thúc: rút hồ sơ, không được tiếp nhận…">Kết thúc khác</th>
+                <th style="text-align: right;">Tổng số</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-summary-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PHÂN HỆ 3: THEO THỦ TỤC -->
+      <div id="analytics-panel-procedure" class="report-card" style="display: none;">
+        <div class="report-card-header">
+          <div class="report-card-title">
+            <span>📋 Tiến độ theo từng Thủ tục hành chính (Cột C)</span>
+            <span id="procedure-selected-domain-text" class="tag tag-primary">Tất cả lĩnh vực</span>
+          </div>
+          <span id="procedure-count-badge" class="tag tag-neutral">0 thủ tục</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 50px;">STT</th>
+                <th>Tên thủ tục hành chính</th>
+                <th style="text-align: right; width: 80px;">Tổng số</th>
+                <th class="center" style="width: 75px;">Hết hạn</th>
+                <th class="center" style="width: 80px;">Sắp hết</th>
+                <th class="center" style="width: 80px;">Đang XL</th>
+                <th class="center" style="width: 85px;">HT trước</th>
+                <th class="center" style="width: 85px;">HT đúng</th>
+                <th class="center" style="width: 80px;">HT trễ</th>
+                <th class="center" style="width: 90px;">KT khác</th>
+              </tr>
+            </thead>
+            <tbody id="procedure-summary-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PHÂN HỆ 4: DANH SÁCH CHI TIẾT -->
+      <div id="analytics-panel-status-detail" class="report-card" style="display: none;">
+        <div class="report-card-header">
+          <div class="report-card-title">
+            <span>📑 Danh sách hồ sơ theo tình trạng giải quyết</span>
+            <span id="status-detail-scope-badge" class="tag tag-primary">Tất cả tình trạng</span>
+          </div>
+          <span id="status-detail-total-badge" class="tag tag-neutral">0 hồ sơ</span>
+        </div>
+
+        <div class="status-pills-bar">
+          <button type="button" class="status-pill-btn active" data-status="all"><span>🌐 Tất cả</span><span class="pill-count">0</span></button>
+          <button type="button" class="status-pill-btn pill-danger" data-status="Hết hạn"><span>🔴 Hết hạn</span><span class="pill-count">0</span></button>
+          <button type="button" class="status-pill-btn pill-warning" data-status="Sắp hết"><span>🟡 Sắp hết</span><span class="pill-count">0</span></button>
+          <button type="button" class="status-pill-btn pill-info" data-status="Đang XL"><span>🔵 Đang XL</span><span class="pill-count">0</span></button>
+          <button type="button" class="status-pill-btn pill-success" data-status="HT trước"><span>🟢 HT trước</span><span class="pill-count">0</span></button>
+          <button type="button" class="status-pill-btn pill-success" data-status="HT đúng"><span>🟢 HT đúng</span><span class="pill-count">0</span></button>
+          <button type="button" class="status-pill-btn pill-orange" data-status="HT trễ"><span>🟠 HT trễ</span><span class="pill-count">0</span></button>
+          <button type="button" class="status-pill-btn pill-neutral" data-status="HT khác"><span>⚪ Kết thúc khác</span><span class="pill-count">0</span></button>
+          <button type="button" class="status-pill-btn pill-neutral" data-status="Đã xong"><span>✔️ Đã kết thúc (tất cả)</span><span class="pill-count">0</span></button>
+        </div>
+
+        <div class="toolbar" style="margin-bottom: 10px; padding: 8px 12px;">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="status-detail-search-input" placeholder="Tìm theo Mã hồ sơ, Thủ tục, Người nộp, Số điện thoại...">
+          </div>
+          <select id="status-detail-filter-domain" class="filter-select" style="min-width: 190px;" aria-label="Lĩnh vực">
+            <option value="">-- Tất cả Lĩnh vực --</option>
+          </select>
+          <button type="button" id="status-detail-reset-btn" class="btn btn-secondary">Đặt lại</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 45px;">STT</th>
+                <th style="width: 140px;">Mã hồ sơ</th>
+                <th>Tên thủ tục hành chính</th>
+                <th>Lĩnh vực</th>
+                <th>Người nộp / Điện thoại</th>
+                <th style="width: 110px;">Ngày tiếp nhận</th>
+                <th style="width: 110px;">Hạn trả</th>
+                <th class="center" style="width: 120px;">Tiến độ</th>
+                <th class="center" style="width: 80px;">Chi tiết</th>
+              </tr>
+            </thead>
+            <tbody id="status-detail-tbody"></tbody>
+          </table>
+          <div id="status-detail-empty" class="empty-state" style="display: none; padding: 35px;">
+            Không tìm thấy hồ sơ nào khớp với tình trạng hoặc bộ lọc đang chọn.
+          </div>
+          <div class="pagination-bar" id="status-detail-pagination">
+            <button type="button" id="status-detail-btn-prev" class="btn btn-secondary btn-sm">◀ Trang trước</button>
+            <span id="status-detail-page-indicator" style="font-size: 12px; font-weight: 600; color: #475569;">Trang 1 / 1</span>
+            <button type="button" id="status-detail-btn-next" class="btn btn-secondary btn-sm">Trang sau ▶</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: CÀI ĐẶT HỆ THỐNG -->
+    <section id="view-settings" style="display: none;">
+      <div class="settings-container">
+        <!-- 1. Nguồn dữ liệu -->
+        <div class="card">
+          <div class="card-title"><span>🔗 Nguồn dữ liệu Google Sheets</span></div>
+          <div class="form-group">
+            <label for="settings-sheet-url">Đường link Google Sheet:</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="url" id="settings-sheet-url" class="form-control" style="height: var(--ctl-h);" placeholder="https://docs.google.com/spreadsheets/d/.../edit" spellcheck="false" autocomplete="off">
+              <button type="button" id="settings-fetch-meta-btn" class="btn btn-secondary">🔄 Quét Lĩnh vực & Trạng thái</button>
+            </div>
+            <div class="hint">
+              Bảng tính phải có trang tính tên chính xác <b>Nhập DL</b> (dữ liệu từ Cột A đến Cột L).
+              <span class="mode-only-extension">Tiện ích dùng phiên đăng nhập Google của trình duyệt; nếu không đăng nhập đúng tài khoản có quyền xem, cần mở chia sẻ <i>"Bất kỳ ai có đường liên kết đều có thể xem"</i>.</span>
+              <span class="mode-only-desktop">Bản Desktop cần quyền chia sẻ <i>"Bất kỳ ai có đường liên kết đều có thể xem"</i>.</span>
+            </div>
+            <div style="margin-top: 10px; background: #fffbeb; border: 1px solid #fef08a; border-left: 4px solid #eab308; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; color: #854d0e; line-height: 1.45;">
+              ⚠️ <b>Lưu ý:</b> Chỉ xử lý dữ liệu trích xuất từ Hệ thống thông tin giải quyết TTHC
+              <a href="https://motcuannmt.mae.gov.vn/" target="_blank" rel="noopener noreferrer" style="color: #b45309; font-weight: 700;">motcuannmt.mae.gov.vn</a>
+              (đúng thứ tự Cột A–L). Bảng tính chứa họ tên công dân — chỉ chia sẻ link cho cán bộ có nhiệm vụ.
+            </div>
+          </div>
+        </div>
+
+        <!-- 1b. Cấu hình vị trí cột dữ liệu -->
+        <div class="card">
+          <div class="card-title" style="justify-content: space-between;">
+            <span>📐 Cấu hình vị trí các Cột dữ liệu (Column Mapping)</span>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" id="btn-auto-detect-cols" class="btn btn-secondary btn-sm" title="Quét tiêu đề sheet và tự khớp cột tương ứng">🔍 Tự động nhận diện cột</button>
+              <button type="button" id="btn-reset-cols" class="btn btn-secondary btn-sm" title="Khôi phục thứ tự cột A đến L mặc định">↺ Mặc định A–L</button>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #475569; margin-bottom: 8px;">
+            Tùy biến vị trí cột tương ứng với biểu mẫu xuất dữ liệu. Nếu phần mềm Một Cửa thay đổi thứ tự cột xuất ra, bạn có thể chỉnh lại tại đây mà không cần sửa code.
+          </div>
+          <div id="col-mapping-container" class="col-mapping-grid">
+            <!-- Render động từ alert.js -->
+          </div>
+        </div>
+
+        <!-- 1c. Giám sát quy trình từng bước (Feature flag) -->
+        <div class="card">
+          <div class="card-title" style="justify-content: space-between;">
+            <span>🔬 Giám sát quy trình từng bước & Xác định bước trễ</span>
+            <span class="tag tag-warning" style="font-size: 11px;">Đang phát triển</span>
+          </div>
+          <div class="toggle-switch-container">
+            <div class="toggle-switch-info">
+              <span class="toggle-switch-title">Bật tính năng theo dõi tiến độ từng bước</span>
+              <span class="toggle-switch-desc">Tính toán hồ sơ đang dừng ở bước nào, bước nào bị quá hạn xử lý so với mốc thời gian quy định.</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settings-enable-step-tracking">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div id="step-tracking-panel" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 12.5px; font-weight: 700; color: #334155;">Danh sách các bước trong quy trình:</span>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" id="btn-default-steps" class="btn btn-secondary btn-xs">↺ Mẫu 4 bước</button>
+                <button type="button" id="btn-add-step" class="btn btn-secondary btn-xs">➕ Thêm bước</button>
+              </div>
+            </div>
+            <div class="steps-table-wrap">
+              <table class="steps-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40px; text-align: center;">STT</th>
+                    <th>Tên bước quy trình</th>
+                    <th style="width: 140px;">Cột Ngày thực tế</th>
+                    <th style="width: 140px;">Cột Hạn xử lý bước</th>
+                    <th style="width: 50px; text-align: center;">Xóa</th>
+                  </tr>
+                </thead>
+                <tbody id="steps-tbody">
+                  <!-- Render động từ alert.js -->
+                </tbody>
+              </table>
+            </div>
+            <div class="hint" style="margin-top: 8px;">
+              * Chọn chữ cái cột (ví dụ F, G, M, N...) tương ứng với các cột mốc thời gian của từng bước trong biểu mẫu.
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Ngưỡng cảnh báo & cách tính -->
+        <div class="card">
+          <div class="card-title"><span>⏱️ Ngưỡng cảnh báo, cách tính thời gian & chu kỳ quét</span></div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="settings-threshold-under7">Thủ tục dưới 7 ngày — cảnh báo khi thời gian còn lại ≤</label>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="number" id="settings-threshold-under7" class="form-control" style="height: var(--ctl-h);" min="1" max="90" step="1" value="20">
+                <span style="font-weight: 600;">%</span>
+              </div>
+              <div class="hint">Mặc định: 20% tổng thời gian quy trình</div>
+            </div>
+            <div class="form-group">
+              <label for="settings-threshold-over7">Thủ tục từ 7 ngày trở lên — cảnh báo khi thời gian còn lại ≤</label>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="number" id="settings-threshold-over7" class="form-control" style="height: var(--ctl-h);" min="1" max="90" step="1" value="15">
+                <span style="font-weight: 600;">%</span>
+              </div>
+              <div class="hint">Mặc định: 15% tổng thời gian quy trình</div>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="settings-calc-method">Cách tính thời gian quy trình:</label>
+              <select id="settings-calc-method" class="form-control" style="height: var(--ctl-h);">
+                <option value="working_days">Ngày làm việc (trừ T7, CN, ngày lễ & ngày nghỉ bổ sung)</option>
+                <option value="calendar_days">Ngày tự nhiên (gồm cả T7, CN)</option>
+              </select>
+              <div class="hint">Khuyến nghị: tính theo ngày làm việc như hệ thống Một cửa</div>
+            </div>
+            <div class="form-group">
+              <label for="settings-check-interval">Chu kỳ tự động quét và kiểm tra:</label>
+              <select id="settings-check-interval" class="form-control" style="height: var(--ctl-h);">
+                <option value="15">Mỗi 15 phút</option>
+                <option value="30" selected>Mỗi 30 phút (Khuyến nghị)</option>
+                <option value="60">Mỗi 1 giờ</option>
+                <option value="120">Mỗi 2 giờ</option>
+                <option value="240">Mỗi 4 giờ</option>
+              </select>
+              <div class="hint">Tự quét ngầm và nhắc khi có hồ sơ đến hạn</div>
+            </div>
+            <div class="form-group mode-only-desktop" style="margin-top: 10px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: #1e293b; cursor: pointer; margin: 0;">
+                <input type="checkbox" id="settings-autostart" style="width: 17px; height: 17px; cursor: pointer;">
+                <span>🚀 Tự khởi động cùng Windows (chạy ngầm khi bật máy)</span>
+              </label>
+              <div class="hint" style="margin-top: 3px; margin-left: 25px;">
+                Tự động chạy ngầm dưới khay hệ thống và theo dõi hồ sơ ngay sau khi khởi động lại máy tính.
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="settings-extra-holidays">Ngày nghỉ bổ sung (Tết Âm lịch, Giỗ Tổ, nghỉ bù…):</label>
+            <textarea id="settings-extra-holidays" class="form-control" rows="4" spellcheck="false" placeholder="Mỗi dòng một ngày DD/MM/YYYY hoặc một khoảng DD/MM/YYYY-DD/MM/YYYY"></textarea>
+            <div class="hint" style="display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <span>Ngày lễ cố định 01/01, 30/04, 01/05, 02/09 đã được tính sẵn. Hãy bổ sung lịch nghỉ hằng năm theo thông báo chính thức.</span>
+              <button type="button" id="settings-btn-default-holidays" class="btn btn-secondary btn-xs">Nạp lịch nghỉ 2026</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Lĩnh vực -->
+        <div class="card">
+          <div class="card-title" style="justify-content: space-between;">
+            <span>📂 Lĩnh vực cần cảnh báo (Cột D)</span>
+            <span id="settings-field-count-badge" class="badge-pill badge-total" style="font-size: 11px; padding: 2px 8px;">0 đã chọn</span>
+          </div>
+          <div class="card-actions">
+            <button type="button" id="settings-btn-select-all-fields" class="btn btn-secondary btn-sm">Chọn tất cả</button>
+            <button type="button" id="settings-btn-deselect-all-fields" class="btn btn-secondary btn-sm">Bỏ chọn tất cả</button>
+          </div>
+          <div id="settings-fields-container" class="checkbox-grid">
+            <div class="muted" style="padding: 10px;">Chưa có danh sách lĩnh vực. Hãy dán link sheet và bấm nút Quét bên trên.</div>
+          </div>
+          <div class="hint">Không chọn lĩnh vực nào = cảnh báo tất cả lĩnh vực.</div>
+        </div>
+
+        <!-- 4. Trạng thái -->
+        <div class="card">
+          <div class="card-title" style="justify-content: space-between;">
+            <span>📋 Trạng thái hồ sơ cần đối chiếu hạn (Cột L)</span>
+            <span id="settings-status-count-badge" class="badge-pill badge-total" style="font-size: 11px; padding: 2px 8px;">0 đã chọn</span>
+          </div>
+          <div style="font-size: 12px; color: #475569; margin-bottom: 8px;">
+            Hồ sơ có trạng thái được chọn sẽ được đối chiếu thời hạn để cảnh báo <b>Sắp hết hạn</b> hoặc <b>Hết hạn</b>. Trạng thái kết thúc (Đã trả kết quả, Đã rút…) luôn được tính là hoàn thành.
+          </div>
+          <div class="card-actions">
+            <button type="button" id="settings-btn-select-all-statuses" class="btn btn-secondary btn-sm">Chọn tất cả</button>
+            <button type="button" id="settings-btn-deselect-all-statuses" class="btn btn-secondary btn-sm">Bỏ chọn tất cả</button>
+            <button type="button" id="settings-btn-select-default-statuses" class="btn btn-secondary btn-sm">Mặc định chuẩn</button>
+          </div>
+          <div id="settings-statuses-container" class="checkbox-grid">
+            <div class="muted" style="padding: 10px;">Chưa có danh sách trạng thái. Hãy dán link sheet và bấm nút Quét bên trên.</div>
+          </div>
+          <div class="hint">Không chọn trạng thái nào = đối chiếu tất cả trạng thái chưa kết thúc.</div>
+        </div>
+
+        <!-- 5. Lưu -->
+        <div class="settings-actions">
+          <button type="button" id="settings-test-btn" class="btn btn-secondary btn-lg">🔍 Kiểm tra kết nối</button>
+          <!-- Xuất / Nhập cấu hình JSON (Web) -->
+        <div class="card" style="margin-top: 14px;">
+          <div class="card-title">
+            <span>💾 Sao Lưu &amp; Chia Sẻ Cấu Hình (JSON)</span>
+          </div>
+          <div style="font-size: 12px; color: #475569; margin-bottom: 10px;">
+            Vì ứng dụng chạy trên Web Vercel và lưu cấu hình trong trình duyệt cá nhân, bạn có thể xuất tệp cấu hình để lưu trữ dự phòng hoặc nhập vào máy tính/điện thoại khác để dùng ngay lập tức.
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" id="btn-export-config" class="btn btn-secondary btn-sm">📤 Xuất cấu hình ra tệp JSON</button>
+            <label class="btn btn-secondary btn-sm" style="margin: 0; cursor: pointer;">
+              📥 Nhập cấu hình từ tệp JSON
+              <input type="file" id="input-import-config" accept=".json" style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <button type="button" id="settings-save-btn" class="btn btn-success btn-lg">💾 Lưu & áp dụng ngay</button>
+        </div>
+        <div id="settings-status-msg" class="settings-msg" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TAB 5: HƯỚNG DẪN SỬ DỤNG HỆ THỐNG (GUIDE VIEW)
+         ============================================================ -->
+    <section id="view-guide" style="display: none;">
+      <div class="guide-container">
+        <!-- Banner đầu trang -->
+        <div class="guide-hero">
+          <div>
+            <h2>📖 CẨM NANG HƯỚNG DẪN SỬ DỤNG HỆ THỐNG</h2>
+            <p>
+              Hướng dẫn toàn diện cách cài đặt và vận hành phần mềm trên cả 2 nền tảng: <b>Ứng dụng Desktop Windows (.exe)</b> độc lập và <b>Tiện ích mở rộng trình duyệt (Browser Extension)</b>.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" id="guide-hero-btn-install" class="btn btn-success">🖥️ Lối tắt Desktop</button>
+            <button type="button" id="guide-hero-btn-settings" class="btn btn-on-dark">⚙️ Đến Cài đặt</button>
+          </div>
+        </div>
+
+        <!-- Thanh điều hướng phụ chuyên đề -->
+        <div class="guide-nav-bar">
+          <button class="guide-nav-btn active" data-guide-target="guide-sec-desktop">
+            🖥️ 1. Ứng Dụng Desktop (.exe)
+          </button>
+          <button class="guide-nav-btn" data-guide-target="guide-sec-extension">
+            🌐 2. Tiện Ích Trình Duyệt (Extension)
+          </button>
+          <button class="guide-nav-btn" data-guide-target="guide-sec-sheet">
+            📋 3. Quy Chuẩn Google Sheets
+          </button>
+          <button class="guide-nav-btn" data-guide-target="guide-sec-features">
+            📊 4. Khai Thác Các Tab Nghiệp Vụ
+          </button>
+          <button class="guide-nav-btn" data-guide-target="guide-sec-faq">
+            ❓ 5. Câu Hỏi Thường Gặp (FAQ)
+          </button>
+        </div>
+
+        <!-- PHẦN 1: ỨNG DỤNG DESKTOP (.EXE) -->
+        <div id="guide-sec-desktop" class="guide-section active">
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>🚀 Tổng Quan & Lợi Ích Của Bản Desktop (.exe)</span>
+            </div>
+            <p style="font-size: 13px; color: #475569; line-height: 1.5; margin-top: 0;">
+              Bản Desktop là phương thức hoạt động <b>tối ưu và ổn định nhất</b> được thiết kế riêng cho máy tính Windows của cán bộ Một cửa:
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px;">
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                <div style="font-weight: 700; color: #1e293b; font-size: 13px; margin-bottom: 4px;">⚡ Khởi Động Độc Lập</div>
+                <div style="font-size: 12px; color: #64748b; line-height: 1.4;">Chạy như một phần mềm Windows thông thường, không phụ thuộc vào trạng thái mở hay đóng của trình duyệt web.</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                <div style="font-weight: 700; color: #1e293b; font-size: 13px; margin-bottom: 4px;">💾 Lưu Link Vĩnh Viễn</div>
+                <div style="font-size: 12px; color: #64748b; line-height: 1.4;">Tự động lưu đường link Google Sheet vào ổ cứng. Khởi động lại máy là tự nạp dữ liệu, không bao giờ phải nhập lại.</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+                <div style="font-weight: 700; color: #1e293b; font-size: 13px; margin-bottom: 4px;">🔔 Thường Trực Khay Hệ Thống</div>
+                <div style="font-size: 12px; color: #64748b; line-height: 1.4;">Chạy ở góc dưới bên phải màn hình (System Tray), nhắc hạn theo chu kỳ và chống mở trùng lặp phiên làm việc.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>🛠️ Hướng Dẫn Cài Đặt 1-Chạm Ra Màn Hình Desktop</span>
+            </div>
+            <div class="guide-step-item">
+              <div class="guide-step-num">1</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Mở thư mục chứa phần mềm</div>
+                <div class="guide-step-desc">Mở thư mục <span class="code-pill">Script nhắc hạn</span> trên máy tính của bạn.</div>
+              </div>
+            </div>
+            <div class="guide-step-item">
+              <div class="guide-step-num">2</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Chạy tệp cài đặt tự động</div>
+                <div class="guide-step-desc">
+                  Nhấp đúp chuột vào tệp <span class="code-pill">Cai_Dat_Ho_So_Mot_Cua.exe</span> (hoặc chạy <span class="code-pill">Cai_Dat_Desktop.bat</span>).
+                </div>
+              </div>
+            </div>
+            <div class="guide-step-item">
+              <div class="guide-step-num">3</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Tự động hoàn tất & tạo lối tắt</div>
+                <div class="guide-step-desc">
+                  Cửa sổ cài đặt hiện ra → bấm <b>"Cài đặt"</b>. Ứng dụng được cài vào <span class="code-pill">%LocalAppData%\HoSoMotCua\App</span> (không cần quyền Administrator), tạo lối tắt <b>"Hồ Sơ Một Cửa"</b> trên Desktop và Start Menu, rồi tự mở. Có tùy chọn khởi động cùng Windows.
+                </div>
+              </div>
+            </div>
+            <div class="guide-callout tip">
+              <span>💡</span>
+              <div>
+                <b>Mẹo tiện ích:</b> Từ ngày hôm sau, bạn chỉ cần nhấp đúp vào biểu tượng <b>"Hồ Sơ Một Cửa"</b> ngoài màn hình Desktop để mở ứng dụng làm việc.
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>🖥️ Cách Sử Dụng Khay Hệ Thống (System Tray)</span>
+            </div>
+            <ul style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; padding-left: 20px;">
+              <li><b>Thu nhỏ cửa sổ:</b> Bấm nút thu nhỏ hoặc đóng cửa sổ, phần mềm sẽ tự thu về khay hệ thống (góc dưới bên phải màn hình cạnh đồng hồ).</li>
+              <li><b>Mở lại cửa sổ:</b> Nhấp đúp chuột trái vào biểu tượng ngôi nhà/tòa nhà của ứng dụng ở khay hệ thống.</li>
+              <li><b>Thoát ứng dụng:</b> Nhấp chuột phải vào biểu tượng khay -> Chọn <b>"Thoát hoàn toàn ứng dụng"</b>.</li>
+              <li><b>Gỡ cài đặt:</b> Start Menu → <b>Hồ Sơ Một Cửa</b> → <b>Gỡ cài đặt Hồ Sơ Một Cửa</b>, hoặc Cài đặt Windows → Ứng dụng → Hồ Sơ Một Cửa → Gỡ cài đặt, hoặc chạy <span class="code-pill">Go_Cai_Dat_Ho_So_Mot_Cua.exe</span> trong thư mục ứng dụng.</li>
+              <li><b>Cơ chế Single Instance:</b> Nếu phần mềm đang mở mà bạn vô tình nhấp đúp tiếp vào icon ngoài Desktop, phần mềm sẽ tự kích hoạt cửa sổ đang có lên đầu thay vì mở thêm cửa sổ mới gây nặng máy.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PHẦN 2: EXTENSION TRÌNH DUYỆT -->
+        <div id="guide-sec-extension" class="guide-section">
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>🌐 Hướng Dẫn Cài Đặt Tiện Ích Trình Duyệt (Chrome / Edge Extension)</span>
+            </div>
+            <div class="guide-step-item">
+              <div class="guide-step-num">1</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Mở trang quản lý Tiện ích trên trình duyệt</div>
+                <div class="guide-step-desc">
+                  Mở Google Chrome hoặc Microsoft Edge, dán vào thanh địa chỉ:
+                  <br><span class="code-pill">chrome://extensions/</span> (trên Chrome) hoặc <span class="code-pill">edge://extensions/</span> (trên Edge) rồi nhấn <b>Enter</b>.
+                </div>
+              </div>
+            </div>
+            <div class="guide-step-item">
+              <div class="guide-step-num">2</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Bật Chế độ dành cho nhà phát triển</div>
+                <div class="guide-step-desc">
+                  Gạt bật công tắc <b>"Chế độ dành cho nhà phát triển" (Developer mode)</b> ở góc trên bên phải màn hình trình duyệt.
+                </div>
+              </div>
+            </div>
+            <div class="guide-step-item">
+              <div class="guide-step-num">3</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Tải tiện ích đã giải nén (Load unpacked)</div>
+                <div class="guide-step-desc">
+                  Bấm vào nút <b>"Tải tiện ích đã giải nén" (Load unpacked)</b> ở góc trên bên trái -> Trỏ đến thư mục chứa mã nguồn:
+                  <br>thư mục chứa tệp <span class="code-pill">manifest.json</span> (thư mục <span class="code-pill">Script nhắc hạn</span>) -> Nhấn <b>Select Folder</b>.
+                </div>
+              </div>
+            </div>
+            <div class="guide-step-item">
+              <div class="guide-step-num">4</div>
+              <div class="guide-step-content">
+                <div class="guide-step-title">Ghim biểu tượng lên thanh công cụ (Pin Extension)</div>
+                <div class="guide-step-desc">
+                  Bấm vào biểu tượng mảnh ghép 🧩 ở góc trên bên phải trình duyệt -> Bấm biểu tượng chiếc ghim 📌 tại dòng <b>"Cảnh Báo Tiến Độ Hồ Sơ Một Cửa"</b> để đưa ra ngoài thanh công cụ.
+                </div>
+              </div>
+            </div>
+            <div class="guide-callout info">
+              <span>🔔</span>
+              <div>
+                <b>Huy hiệu cảnh báo:</b> Biểu tượng tiện ích hiển thị số hồ sơ cần cảnh báo — nền đỏ khi có hồ sơ hết hạn, nền vàng khi chỉ có hồ sơ sắp hết hạn. Tiện ích dùng phiên đăng nhập Google của trình duyệt để đọc Sheet.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHẦN 3: QUY CHUẨN GOOGLE SHEETS -->
+        <div id="guide-sec-sheet" class="guide-section">
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>📋 Quy Định Cấu Trúc Dữ Liệu Google Sheets Chuẩn</span>
+            </div>
+            <p style="font-size: 12.5px; color: #475569; margin-top: 0; line-height: 1.5;">
+              Hệ thống đọc dữ liệu trực tiếp từ trang tính Google Sheets. Để đảm bảo phân tích và tính toán chính xác số ngày làm việc, trang tính của đơn vị nên tuân theo thứ tự các cột sau:
+            </p>
+            <div style="overflow-x: auto; margin-bottom: 12px;">
+              <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #f1f5f9; color: #1e293b; text-align: left;">
+                    <th style="padding: 8px 10px; border: 1px solid #e2e8f0; width: 60px;">Cột</th>
+                    <th style="padding: 8px 10px; border: 1px solid #e2e8f0; width: 140px;">Tên Cột Chuẩn</th>
+                    <th style="padding: 8px 10px; border: 1px solid #e2e8f0;">Ý Nghĩa Nghiệp Vụ</th>
+                    <th style="padding: 8px 10px; border: 1px solid #e2e8f0; width: 160px;">Ví Dụ Dữ Liệu</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">A</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">STT</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Số thứ tự (công thức tự đánh số)</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">1, 2, 3...</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">B</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600; color: #2563eb;">Mã hồ sơ</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Mã định danh duy nhất của hồ sơ</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">H20.42-260510-100277</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">C</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Tên thủ tục</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Tên thủ tục hành chính</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">Cấp, cấp lại mã số vùng trồng...</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">D</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Tên lĩnh vực</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Lĩnh vực chuyên môn xử lý</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">Thủy sản, Kiểm lâm...</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">E</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Nội dung yêu cầu</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Nội dung yêu cầu giải quyết (có thể trống)</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;"></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">F</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Ngày tiếp nhận</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Thời điểm tiếp nhận hồ sơ</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">11/05/2026 07:09:47</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">G</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600; color: #dc2626;">Ngày hẹn trả</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Hạn trả kết quả cho công dân</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">27/05/2026 07:30:00</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">H</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Ngày kết thúc xử lý</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Có giá trị = hồ sơ đã kết thúc</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">27/05/2026 07:56:02</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">I</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Chủ hồ sơ</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Tổ chức / cá nhân đứng tên hồ sơ</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">Công ty TNHH...</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">J</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Người nộp hồ sơ</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Người trực tiếp nộp</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">Nguyễn Văn A</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">K</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Số điện thoại</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Số liên hệ (đã che bớt)</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">***699</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">L</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600;">Trạng thái hồ sơ</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Trạng thái nghiệp vụ trên phần mềm Một cửa</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">Đã trả kết quả, Chờ xử lý...</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 700; text-align: center;">N</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; font-weight: 600; color: #16a34a;">Tình trạng (công thức)</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0;">Tình trạng tiến độ do Sheet tính, ứng dụng tự tính lại theo cùng logic</td>
+                    <td style="padding: 6px 10px; border: 1px solid #e2e8f0; color: #64748b;">Hoàn thành trước hạn...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="guide-callout warning">
+              <span>⚠️</span>
+              <div>
+                <b>Lưu ý quan trọng về Quyền chia sẻ Google Sheet:</b>
+                <br>Tệp Google Sheet phải được thiết lập quyền chia sẻ: <b>"Bất kỳ ai có đường liên kết đều có thể xem" (Anyone with the link can view)</b>. Nếu để quyền "Hạn chế", phần mềm sẽ không thể trích xuất dữ liệu.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHẦN 4: KHAI THÁC 4 TAB NGHIỆP VỤ -->
+        <div id="guide-sec-features" class="guide-section">
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>🚨 Tab 1: Cảnh Báo Đến Hạn</span>
+            </div>
+            <p style="font-size: 12.5px; color: #475569; line-height: 1.5; margin: 0 0 8px 0;">
+              Chuyên trách giám sát các hồ sơ có nguy cơ chậm trễ hẹn với công dân. Tự động chia 2 nhóm cảnh báo:
+            </p>
+            <ul style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0 0 10px 0; padding-left: 20px;">
+              <li><b style="color: #ef4444;">🔴 HẾT HẠN:</b> Đã quá ngày hẹn trả kết quả mà chưa hoàn thành. Cần giải quyết khẩn cấp!</li>
+              <li><b style="color: #f59e0b;">🟡 SẮP HẾT HẠN:</b> Thời gian còn lại ≤ ngưỡng cài đặt (mặc định 20% với thủ tục dưới 7 ngày, 15% với thủ tục từ 7 ngày trở lên).</li>
+            </ul>
+            <div style="font-size: 12.5px; color: #475569;">
+              👉 <b>Thao tác:</b> Bấm trực tiếp vào <b>Mã hồ sơ</b> hoặc nút <b>Chi tiết</b> để mở popup đối soát toàn văn hồ sơ.
+            </div>
+          </div>
+
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>🔍 Tab 2: Tra Cứu Toàn Bộ Hồ Sơ</span>
+            </div>
+            <ul style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; padding-left: 20px;">
+              <li><b>Tìm kiếm tức thì:</b> Gõ bất kỳ ký tự nào của Mã hồ sơ, Tên thủ tục, Tên chủ hồ sơ hoặc Số điện thoại.</li>
+              <li><b>Bộ lọc kết hợp:</b> Lọc theo từng Lĩnh vực chuyên môn và lọc theo Tiến độ xử lý.</li>
+              <li><b>Phân trang thông minh:</b> Tự động chia trang 50 hồ sơ/trang, giúp hiển thị siêu tốc và mượt mà kể cả danh sách có hàng ngàn hồ sơ.</li>
+            </ul>
+          </div>
+
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>📊 Tab 3: Thống Kê & Báo Cáo Chuyên Sâu</span>
+            </div>
+            <ul style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; padding-left: 20px;">
+              <li><b>5 thẻ chỉ số:</b> Tổng hồ sơ, Tỷ lệ giải quyết đúng/trước hạn, Đang xử lý, Sắp hết hạn, Hết hạn — bấm vào thẻ để mở danh sách chi tiết.</li>
+              <li><b>Biểu đồ trực quan:</b> Cơ cấu tình trạng tiến độ, Hồ sơ theo lĩnh vực, Thủ tục cần đôn đốc, Hồ sơ tiếp nhận theo tuần/tháng và Tỷ lệ đúng hạn theo thời gian. Rê chuột để xem số liệu, bấm vào thanh để xem danh sách hồ sơ, bấm <b>"Xem bảng"</b> để xem dạng bảng số.</li>
+              <li><b>Theo lĩnh vực / Lĩnh vực × Tiến độ / Theo thủ tục:</b> Bảng số liệu chi tiết; <b>bấm vào ô số bất kỳ</b> để xem danh sách hồ sơ tương ứng.</li>
+              <li><b>Danh sách chi tiết:</b> Lọc nhanh theo tình trạng, lĩnh vực, từ khóa; phân trang 50 hồ sơ/trang.</li>
+            </ul>
+          </div>
+
+          <div class="guide-card">
+            <div class="guide-card-header">
+              <span>⚙️ Tab 4: Cài Đặt Hệ Thống & Tự Động Lưu</span>
+            </div>
+            <ul style="font-size: 12.5px; color: #475569; line-height: 1.6; margin: 0; padding-left: 20px;">
+              <li><b>Dán link Google Sheet:</b> Nhập link và bấm <b>"Quét Lĩnh vực & Trạng thái"</b>, sau đó bấm <b>"Lưu & áp dụng ngay"</b>. Đường link được ghi nhớ cho các lần mở sau.</li>
+              <li><b>Chu kỳ quét:</b> Đặt khoảng thời gian quét tự động (15, 30, 60 phút...).</li>
+              <li><b>Ngày nghỉ bổ sung:</b> Khai báo Tết Âm lịch, Giỗ Tổ, ngày nghỉ bù để tính ngày làm việc chính xác.</li>
+              <li><b>Chọn trạng thái theo dõi:</b> Chọn các trạng thái hồ sơ cần cảnh báo hạn (có nút chọn nhanh "Mặc định chuẩn").</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PHẦN 5: CÂU HỎI THƯỜNG GẶP (FAQ) -->
+        <div id="guide-sec-faq" class="guide-section">
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>❓ 1. Phần mềm báo lỗi: "Không thể đọc dữ liệu từ sheet"?</span>
+              <span>▼</span>
+            </div>
+            <div class="faq-answer">
+              <b>Cách xử lý:</b> Bạn hãy mở file Google Sheet trên trình duyệt -> Bấm nút <b>Chia sẻ (Share)</b> ở góc trên bên phải -> Chuyển quyền truy cập chung thành <b>"Bất kỳ ai có đường liên kết đều có thể xem" (Anyone with the link can view)</b>. Sau đó dán lại link và bấm nút Quét lại trên phần mềm.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>❓ 2. Mở ứng dụng Desktop báo "Ứng dụng đang chạy dưới khay hệ thống"?</span>
+              <span>▼</span>
+            </div>
+            <div class="faq-answer">
+              <b>Giải thích:</b> Ứng dụng đã được khởi động và đang chạy nền ở góc dưới bên phải màn hình (cạnh đồng hồ) để tiết kiệm tài nguyên.
+              <br><b>Cách mở:</b> Hãy nhìn xuống góc dưới cùng bên phải màn hình, nhấp đúp vào biểu tượng ngôi nhà/tòa nhà của ứng dụng để hiển thị lại cửa sổ làm việc.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>❓ 3. Tôi có phải nhập lại link Google Sheet mỗi khi bật máy tính không?</span>
+              <span>▼</span>
+            </div>
+            <div class="faq-answer">
+              <b>Hoàn toàn KHÔNG:</b> Hệ thống tự động ghi nhớ link sheet vào bộ nhớ cục bộ (bản Desktop: <span class="code-pill">%LocalAppData%\HoSoMotCua\storage.json</span>; bản tiện ích: bộ nhớ của trình duyệt). Mỗi khi mở ứng dụng, dữ liệu trang tính sẽ tự động được kết nối và tải lại chính xác.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>❓ 4. Làm cách nào để cập nhật số liệu mới nhất vừa nhập trên Google Sheet?</span>
+              <span>▼</span>
+            </div>
+            <div class="faq-answer">
+              <b>Rất đơn giản:</b> Bạn chỉ cần bấm vào nút <b>"🔄 Cập nhật"</b> ở góc trên bên phải thanh tiêu đề của ứng dụng, Ứng dụng cũng tự cập nhật theo chu kỳ đã cài đặt (mặc định 30 phút).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Chi Tiết Hồ Sơ -->
+  <div id="detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title" style="margin: 0; font-size: 14.5px;">Chi Tiết Hồ Sơ</h3>
+        <button type="button" class="modal-close" data-close-modal="detail-modal" aria-label="Đóng">✕</button>
+      </div>
+      <div class="modal-body" id="modal-content"></div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <a id="modal-btn-open-portal" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-weight: 600;">
+          <span>🌐 Mở trên Một Cửa</span>
+        </a>
+        <button type="button" class="btn btn-secondary" data-close-modal="detail-modal">Đóng cửa sổ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Lối tắt Desktop (bản tiện ích) -->
+  <div id="desktop-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="desktop-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="desktop-modal-title" style="margin: 0; font-size: 15px; color: #ffffff;">🖥️ Mở ứng dụng trực tiếp từ Desktop</h3>
+        <button type="button" class="modal-close" data-close-modal="desktop-modal" aria-label="Đóng">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-top: 0; font-size: 13px; line-height: 1.5;">
+          Có 2 cách mở <b>Hồ Sơ Một Cửa</b> như một phần mềm riêng trên máy tính Windows:
+        </p>
+        <div class="detail-box">
+          <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">🚀 Cách 1: Bản Desktop độc lập (khuyến nghị)</div>
+          <div style="font-size: 12.5px; color: #475569; line-height: 1.45;">
+            Nhấp đúp tệp <b>Cai_Dat_Ho_So_Mot_Cua.exe</b> trong thư mục ứng dụng. Bấm "Cài đặt": ứng dụng được cài vào <span class="code-pill">%LocalAppData%\HoSoMotCua\App</span>, tạo lối tắt trên Desktop / Start Menu và chạy dưới khay hệ thống. Gỡ bằng <b>Go_Cai_Dat_Ho_So_Mot_Cua.exe</b> hoặc Cài đặt Windows → Ứng dụng.
+          </div>
+        </div>
+        <div class="detail-box" style="margin-bottom: 0;">
+          <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">⚡ Cách 2: Lối tắt mở thẳng tiện ích này</div>
+          <div style="font-size: 12.5px; color: #475569; line-height: 1.45; margin-bottom: 10px;">
+            Tải tệp <b>.bat</b>, nhấp đúp để chạy 1 lần. Lối tắt "Ho So Mot Cua" sẽ xuất hiện trên Desktop và mở tiện ích dưới dạng cửa sổ ứng dụng.
+          </div>
+          <button type="button" id="btn-download-shortcut-bat" class="btn btn-success">📥 Tải tệp tạo lối tắt (.bat)</button>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" id="desktop-modal-btn-guide" class="btn btn-secondary">📖 Xem hướng dẫn</button>
+        <button type="button" class="btn btn-secondary" data-close-modal="desktop-modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script src="core.js"></script>
+  <script src="charts.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
