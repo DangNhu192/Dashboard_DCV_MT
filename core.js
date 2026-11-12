@@ -669,19 +669,24 @@
           remainingDays = (dateEnd.getTime() - now.getTime()) / DAY_MS;
         }
 
-        // Tính tổng số ngày từ Ngày tiếp nhận đến Ngày hẹn trả (chính xác theo thời gian dữ liệu Google Sheet)
+        // Tính tổng thời gian quy trình từ Ngày tiếp nhận đến Ngày hẹn trả (đồng bộ theo chế độ Ngày làm việc / Ngày tự nhiên)
         if (dateStart) {
-          const diffMs = dateEnd.getTime() - dateStart.getTime();
-          const diffDays = diffMs / DAY_MS;
-          const intDays = Math.round((dateOnly(dateEnd).getTime() - dateOnly(dateStart).getTime()) / DAY_MS);
-          // Nếu chênh lệch do giờ/phút nhỏ (< 0.05 ngày, tức dưới 1 giờ lệch) thì lấy tròn số ngày nguyên intDays (khớp INT(G)-INT(F) trong Google Sheet)
-          // Nếu có phần thập phân rõ ràng (ví dụ thủ tục 0.5 ngày, 2.5 ngày) thì giữ 1 chữ số thập phân
-          if (Math.abs(diffDays - intDays) < 0.05) {
-            totalDays = intDays;
+          if (isWorkingDays) {
+            // Tính chính xác số ngày làm việc của quy trình (trừ T7, Chủ Nhật và ngày nghỉ lễ)
+            const wDays = HSMC.calculateWorkingDays(dateStart, dateEnd, holidaySet);
+            totalDays = wDays > 0 ? wDays : 0.5;
           } else {
-            totalDays = Math.round(diffDays * 10) / 10;
+            // Tính theo số ngày tự nhiên
+            const diffMs = dateEnd.getTime() - dateStart.getTime();
+            const diffDays = diffMs / DAY_MS;
+            const intDays = Math.round((dateOnly(dateEnd).getTime() - dateOnly(dateStart).getTime()) / DAY_MS);
+            if (Math.abs(diffDays - intDays) < 0.05) {
+              totalDays = intDays;
+            } else {
+              totalDays = Math.round(diffDays * 10) / 10;
+            }
+            if (totalDays <= 0 && intDays > 0) totalDays = intDays;
           }
-          if (totalDays <= 0 && intDays > 0) totalDays = intDays;
         }
 
         const calcTotalDays = totalDays !== null && totalDays > 0 ? totalDays : 1;

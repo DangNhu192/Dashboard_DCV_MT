@@ -553,15 +553,18 @@ function textMatch(item, q, withPhone) {
 function remainingText(item) {
   if (item.remainingDays === null || item.remainingDays === undefined) return `<span class="muted">Chưa có hạn</span>`;
   const total = item.totalDays;
-  const totalTxt = total !== null && total !== undefined ? ` / ${total} ngày` : " ngày";
+  const isWorking = item.calcMethod !== "Ngày tự nhiên";
+  const unitStr = isWorking ? "ngày làm việc" : "ngày";
+  const procSub = total !== null && total !== undefined
+    ? ` <span class="cell-sub" style="color: #64748b; font-size: 11.5px; white-space: nowrap;">(Quy trình: ${total} ${unitStr})</span>`
+    : "";
 
   if (item.alertStatus === "HẾT HẠN" || item.formulaStatus === "Hết hạn") {
     const d = Math.abs(item.remainingDays || 0);
     const overdueLabel = d > 0 ? `Quá hạn ${d} ngày` : "Hết hạn hôm nay";
-    const totalSub = total !== null && total !== undefined ? ` <span class="cell-sub" style="color: #64748b; font-size: 11.5px;">(Tổng: ${total} ngày)</span>` : "";
-    return `<span class="text-danger font-semibold">${overdueLabel}</span>${totalSub}`;
+    return `<span class="text-danger font-semibold">${overdueLabel}</span>${procSub}`;
   }
-  return `<span class="text-warning font-semibold">Còn <b>${item.remainingDays}</b>${totalTxt}</span>`;
+  return `<span class="text-warning font-semibold">Còn <b>${item.remainingDays}</b> ngày</span>${procSub}`;
 }
 
 function renderAlertsTable() {
@@ -1280,10 +1283,12 @@ function openDetailModal(code) {
   const item = allDossiers.find((d) => d.maHoSo === code) || currentAlerts.find((d) => d.maHoSo === code);
   if (!item) return;
   document.getElementById("modal-title").textContent = `Hồ sơ: ${item.maHoSo || ""}`;
-  const totalDaysTxt = item.totalDays !== null && item.totalDays !== undefined ? ` / Tổng ${item.totalDays} ngày` : "";
+  const isWorking = item.calcMethod !== "Ngày tự nhiên";
+  const unitStr = isWorking ? "ngày làm việc" : "ngày";
+  const procTxt = item.totalDays !== null && item.totalDays !== undefined ? ` (Quy trình: ${item.totalDays} ${unitStr})` : "";
   const remain = item.remainingDays === null || item.remainingDays === undefined
     ? "Chưa có ngày hẹn trả"
-    : `${item.remainingDays >= 0 ? `Còn ${item.remainingDays}` : `Quá hạn ${Math.abs(item.remainingDays)}`} ngày${totalDaysTxt} · ${escapeHtml(item.calcMethod || "")}`;
+    : `${item.remainingDays >= 0 ? `Còn ${item.remainingDays}` : `Quá hạn ${Math.abs(item.remainingDays)}`} ngày${procTxt} · ${escapeHtml(item.calcMethod || "")}`;
 
   let stepTimelineHtml = "";
   if (item.stepDetails && item.stepDetails.length > 0) {
