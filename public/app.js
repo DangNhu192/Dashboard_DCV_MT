@@ -66,30 +66,121 @@ function apiFetch(path, options) {
 }
 
 // ----------------------------------------------------
-// BỘ LƯU TRỮ ĐA NỀN TẢNG
+// BỘ LƯU TRỮ ĐA NỀN TẢNG (Web PWA: LocalStorage cho Config + IndexedDB cho Dữ liệu lớn)
 // ----------------------------------------------------
+const WEB_STORAGE_KEY = "hsmc_web_config_v1.1";
+
+// Cache hồ sơ lớn (>5MB) bằng IndexedDB để không bao giờ bị tràn giới hạn 5MB của localStorage
+const DossierCache = {
+  _dbPromise: null,
+  _getDB() {
+    if (this._dbPromise) return this._dbPromise;
+    this._dbPromise = new Promise((resolve) => {
+      if (typeof indexedDB === "undefined") return resolve(null);
+      try {
+        const req = indexedDB.open("HSMC_Web_DB", 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains("cache")) {
+            db.createObjectStore("cache");
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => resolve(null);
+      } catch (err) {
+        resolve(null);
+      }
+    });
+    return this._dbPromise;
+  },
+  async get(key) {
+    try {
+      const db = await this._getDB();
+      if (!db) return null;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction("cache", "readonly");
+          const req = tx.objectStore("cache").get(key);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    } catch (e) {
+      return null;
+    }
+  },
+  async set(key, val) {
+    try {
+      const db = await this._getDB();
+      if (!db) return false;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction("cache", "readwrite");
+          tx.objectStore("cache").put(val, key);
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => resolve(false);
+        } catch (e) {
+          resolve(false);
+        }
+      });
+    } catch (e) {
+      return false;
+    }
+  }
+};
+
 const Storage = {
   _readAll() {
     try {
-      const raw = localStorage.getItem(WEB_STORAGE_KEY);
+      let raw = localStorage.getItem(WEB_STORAGE_KEY);
+
+      // Tự động dọn dẹp các key phiên bản cũ nếu đã bị đầy quota
+      try {
+        const legacyKeys = ["hsmc_web_storage_v1", "hsmc_web_storage_v1.1"];
+        legacyKeys.forEach((lk) => {
+          const oldVal = localStorage.getItem(lk);
+          if (oldVal) {
+            try {
+              const parsed = JSON.parse(oldVal);
+              delete parsed.allDossiers;
+              if (!raw) {
+                localStorage.setItem(WEB_STORAGE_KEY, JSON.stringify(parsed));
+                raw = localStorage.getItem(WEB_STORAGE_KEY);
+              }
+            } catch (_) {}
+            localStorage.removeItem(lk);
+          }
+        });
+      } catch (_) {}
+
       if (!raw) {
-        // Khởi tạo mặc định nếu chưa có
+        let savedUrl = "";
+        try { savedUrl = localStorage.getItem("hoSoMotCua_savedSheetUrl") || ""; } catch (_) {}
+        if (!savedUrl && typeof HSMC !== "undefined") savedUrl = HSMC.DEFAULT_SHEET_URL || "";
+
         const init = {
-          sheetUrl: HSMC.DEFAULT_SHEET_URL,
-          lastSheetUrl: HSMC.DEFAULT_SHEET_URL,
-          calcMethod: HSMC.DEFAULTS.calcMethod,
-          thresholdUnder7: HSMC.DEFAULTS.thresholdUnder7,
-          thresholdOver7: HSMC.DEFAULTS.thresholdOver7,
-          checkInterval: HSMC.DEFAULTS.checkInterval,
-          extraHolidays: HSMC.DEFAULT_EXTRA_HOLIDAYS,
-          columnMapping: Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING),
+          sheetUrl: savedUrl,
+          lastSheetUrl: savedUrl,
+          calcMethod: typeof HSMC !== "undefined" ? HSMC.DEFAULTS.calcMethod : "weekdays_only",
+          thresholdUnder7: typeof HSMC !== "undefined" ? HSMC.DEFAULTS.thresholdUnder7 : 50,
+          thresholdOver7: typeof HSMC !== "undefined" ? HSMC.DEFAULTS.thresholdOver7 : 20,
+          checkInterval: typeof HSMC !== "undefined" ? HSMC.DEFAULTS.checkInterval : 30,
+          extraHolidays: typeof HSMC !== "undefined" ? HSMC.DEFAULT_EXTRA_HOLIDAYS : "",
+          columnMapping: typeof HSMC !== "undefined" ? Object.assign({}, HSMC.DEFAULT_COLUMN_MAPPING) : {},
           enableStepTracking: false,
-          stepDefinitions: HSMC.DEFAULT_WORKFLOW_STEPS.map((s) => Object.assign({}, s))
+          stepDefinitions: typeof HSMC !== "undefined" ? HSMC.DEFAULT_WORKFLOW_STEPS.map((s) => Object.assign({}, s)) : []
         };
-        localStorage.setItem(WEB_STORAGE_KEY, JSON.stringify(init));
+        try { localStorage.setItem(WEB_STORAGE_KEY, JSON.stringify(init)); } catch (_) {}
         return init;
       }
-      return JSON.parse(raw);
+      const data = JSON.parse(raw);
+      if (data && data.allDossiers) {
+        delete data.allDossiers;
+        try { localStorage.setItem(WEB_STORAGE_KEY, JSON.stringify(data)); } catch (_) {}
+      }
+      return data || {};
     } catch (e) {
       console.error("[WebStorage] Read error:", e);
       return {};
@@ -98,9 +189,36 @@ const Storage = {
 
   get(keys, callback) {
     const data = this._readAll();
-    if (!keys) return callback(data);
+    if (!data.sheetUrl && !data.lastSheetUrl) {
+      try {
+        const u = localStorage.getItem("hoSoMotCua_savedSheetUrl");
+        if (u) { data.sheetUrl = u; data.lastSheetUrl = u; }
+      } catch (_) {}
+    }
+
+    const keyArr = keys ? (Array.isArray(keys) ? keys : [keys]) : Object.keys(data);
+    const needsDossiers = keyArr.includes("allDossiers");
+    const needsAlerts = keyArr.includes("currentAlerts");
+
+    if (needsDossiers || needsAlerts) {
+      (async () => {
+        const result = {};
+        keyArr.forEach((k) => {
+          if (k in data) result[k] = data[k];
+        });
+        if (needsDossiers) {
+          result.allDossiers = (allDossiers && allDossiers.length) ? allDossiers : ((await DossierCache.get("allDossiers")) || []);
+        }
+        if (needsAlerts) {
+          result.currentAlerts = (currentAlerts && currentAlerts.length) ? currentAlerts : ((await DossierCache.get("currentAlerts")) || []);
+        }
+        callback(result);
+      })();
+      return;
+    }
+
     const result = {};
-    (Array.isArray(keys) ? keys : [keys]).forEach((k) => {
+    keyArr.forEach((k) => {
       if (k in data) result[k] = data[k];
     });
     callback(result);
@@ -109,7 +227,25 @@ const Storage = {
   set(items, callback) {
     try {
       const existing = this._readAll();
-      const merged = Object.assign({}, existing || {}, items || {});
+      const clone = Object.assign({}, items || {});
+
+      // Lưu trữ allDossiers & currentAlerts vào IndexedDB & RAM, tuyệt đối KHÔNG lưu allDossiers vào localStorage
+      if ("allDossiers" in clone) {
+        if (Array.isArray(clone.allDossiers)) allDossiers = clone.allDossiers;
+        DossierCache.set("allDossiers", clone.allDossiers).catch(() => {});
+        delete clone.allDossiers;
+      }
+      if ("currentAlerts" in clone) {
+        if (Array.isArray(clone.currentAlerts)) currentAlerts = clone.currentAlerts;
+        DossierCache.set("currentAlerts", clone.currentAlerts).catch(() => {});
+      }
+
+      if (clone.sheetUrl) {
+        try { localStorage.setItem("hoSoMotCua_savedSheetUrl", clone.sheetUrl); } catch (_) {}
+      }
+
+      const merged = Object.assign({}, existing || {}, clone);
+      delete merged.allDossiers;
       localStorage.setItem(WEB_STORAGE_KEY, JSON.stringify(merged));
     } catch (e) {
       console.error("[WebStorage] Write error:", e);
@@ -295,17 +431,23 @@ async function checkAndTriggerAlertCore(opts) {
     ]);
     let target = config.sheetUrl || config.lastSheetUrl || "";
     if (!target) {
+      try { target = localStorage.getItem("hoSoMotCua_savedSheetUrl") || ""; } catch (_) {}
+    }
+    if (!target) {
       await storageSet({ sheetUrlMissing: true, currentAlerts: [], allDossiers: [] });
       return { success: false, error: "Chưa cấu hình link Google Sheet. Vui lòng vào tab Cài Đặt để nhập link." };
     }
 
     try {
       const { allDossiers: list, alertRecords } = await HSMC.runCheck(target, config, webFetchText, new Date());
+      currentAlerts = alertRecords || [];
+      allDossiers = list || [];
       await storageSet({
         currentAlerts: alertRecords,
         allDossiers: list,
         lastCheckTime: new Date().toISOString(),
         lastSheetUrl: target,
+        sheetUrl: target,
         sheetUrlMissing: false,
         lastCheckError: null
       });
@@ -1226,8 +1368,8 @@ function loadAllData(callback) {
     "currentAlerts", "allDossiers", "lastCheckTime", "lastSheetUrl", "sheetUrl", "lastCheckError", "checkInterval",
     "columnMapping", "enableStepTracking", "stepDefinitions"
   ], (data) => {
-    currentAlerts = data.currentAlerts || [];
-    allDossiers = data.allDossiers || [];
+    currentAlerts = (data.currentAlerts && data.currentAlerts.length) ? data.currentAlerts : (currentAlerts || []);
+    allDossiers = (data.allDossiers && data.allDossiers.length) ? data.allDossiers : (allDossiers || []);
     lastCheckTimeIso = data.lastCheckTime || null;
     checkIntervalMin = data.checkInterval ?? HSMC.DEFAULTS.checkInterval;
     sheetUrl = data.sheetUrl || data.lastSheetUrl || "";
