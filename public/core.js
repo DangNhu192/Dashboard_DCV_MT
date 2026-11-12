@@ -15,8 +15,7 @@
 
   HSMC.VERSION = "1.1.1";
 
-  HSMC.DEFAULT_SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/1_DeZUPXerZzaE7jeWz83G7lEOCAhRLtBftDwIkqOqmw/edit?gid=342857175#gid=342857175";
+  HSMC.DEFAULT_SHEET_URL = "";
 
   HSMC.SHEET_NAME = "Nhập DL";
 

@@ -295,8 +295,8 @@ async function checkAndTriggerAlertCore(opts) {
     ]);
     let target = config.sheetUrl || config.lastSheetUrl || "";
     if (!target) {
-      target = HSMC.DEFAULT_SHEET_URL;
-      await storageSet({ sheetUrl: target, lastSheetUrl: target });
+      await storageSet({ sheetUrlMissing: true, currentAlerts: [], allDossiers: [] });
+      return { success: false, error: "Chưa cấu hình link Google Sheet. Vui lòng vào tab Cài Đặt để nhập link." };
     }
 
     try {
@@ -909,7 +909,7 @@ function loadSettingsIntoForm() {
     if (!url) {
       try { url = localStorage.getItem("hoSoMotCua_savedSheetUrl") || ""; } catch (e) {}
     }
-    document.getElementById("settings-sheet-url").value = url || HSMC.DEFAULT_SHEET_URL;
+    document.getElementById("settings-sheet-url").value = url || "";
     document.getElementById("settings-threshold-under7").value = data.thresholdUnder7 ?? HSMC.DEFAULTS.thresholdUnder7;
     document.getElementById("settings-threshold-over7").value = data.thresholdOver7 ?? HSMC.DEFAULTS.thresholdOver7;
     document.getElementById("settings-calc-method").value = data.calcMethod || HSMC.DEFAULTS.calcMethod;
