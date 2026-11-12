@@ -1,18 +1,6 @@
 {
-  "name": "ho-so-mot-cua-web",
+  "name": "dashboard-dcv-mt",
   "version": "1.1.1",
-  "description": "Hệ Thống Theo Dõi, Tra Cứu & Cảnh Báo Hồ Sơ Một Cửa - Phiên bản Web & PWA",
-  "main": "index.html",
-  "scripts": {
-    "start": "npx serve ."
-  },
-  "keywords": [
-    "mot-cua",
-    "dossier",
-    "pwa",
-    "vercel",
-    "agriculture-environment"
-  ],
-  "author": "Hồ Sơ Một Cửa Team",
-  "license": "MIT"
+  "description": "Hệ Thống Theo Dõi, Tra Cứu & Cảnh Báo Hồ Sơ Một Cửa - Web & PWA",
+  "private": true
 }
